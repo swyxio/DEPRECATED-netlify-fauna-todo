@@ -12,7 +12,6 @@ if (!process.env.FAUNADB_SERVER_SECRET) {
 }
 
 console.log(chalk.cyan('Creating your FaunaDB Database...\n'))
-console.log(chalk.yellow('Required FAUNADB_SECRET enviroment variable not found.'))
 if (insideNetlify) {
   // Run idempotent database creation
   createFaunaDB(process.env.FAUNADB_SERVER_SECRET).then(() => {
