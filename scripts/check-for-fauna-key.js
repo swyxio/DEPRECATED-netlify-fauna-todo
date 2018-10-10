@@ -1,12 +1,5 @@
 const chalk = require('chalk')
-var util = require('util');
-var exec = require('child_process').exec;
 
-function clear(){
-    exec('clear', function(error, stdout, stderr){
-        util.puts(stdout);
-    });
-}
 function checkForFaunaKey() {
   if (!process.env.FAUNADB_SERVER_SECRET) {
     console.log(chalk.yellow('Required FAUNADB_SECRET enviroment variable not found.'))
