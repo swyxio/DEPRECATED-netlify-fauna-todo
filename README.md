@@ -51,7 +51,7 @@ This application is using [React](https://reactjs.org/) for the frontend, [Netli
     In your terminal run the following command:
 
     ```bash
-    export FAUNADB_SECRET=YourFaunaDBKeyHere
+    export FAUNADB_SERVER_SECRET=YourFaunaDBKeyHere
     ```
 
 5. Run project locally
@@ -140,9 +140,9 @@ Head over to [https://app.fauna.com/sign-up](https://app.fauna.com/sign-up) to c
 
     ```bash
     # on mac
-    export FAUNADB_SECRET=YourFaunaDBKeyHere
+    export FAUNADB_SERVER_SECRET=YourFaunaDBKeyHere
     # on windows
-    set FAUNADB_SECRET=YourFaunaDBKeyHere
+    set FAUNADB_SERVER_SECRET=YourFaunaDBKeyHere
     ```
 
     Add the [/scripts/bootstrap-fauna-database.js](https://github.com/netlify/netlify-faunadb-example/blob/f965df497f0de507c2dfdb1a8a32a81bbd939314/scripts/bootstrap-fauna-database.js) to the root directory of the project. This is an idempotent script that you can run 1 million times and have the same result (one todos database)
@@ -320,13 +320,13 @@ Lets rock and roll.
     ```js
     /* code from functions/todos-create.js */
     import faunadb from 'faunadb' /* Import faunaDB sdk */
-    
+
     /* configure faunaDB Client with our secret */
     const q = faunadb.query
     const client = new faunadb.Client({
-      secret: process.env.FAUNADB_SECRET
+      secret: process.env.FAUNADB_SERVER_SECRET
     })
-    
+
     /* export our lambda function as named "handler" export */
     exports.handler = (event, context, callback) => {
       /* parse the string body into a useable JS object */
@@ -407,12 +407,12 @@ So far we have created our `todo-create` function done and we've seen how we mak
     /* code from functions/todos-read.js */
     import faunadb from 'faunadb'
     import getId from './utils/getId'
-    
+
     const q = faunadb.query
     const client = new faunadb.Client({
-      secret: process.env.FAUNADB_SECRET
+      secret: process.env.FAUNADB_SERVER_SECRET
     })
-    
+
     exports.handler = (event, context, callback) => {
       const id = getId(event.path)
       console.log(`Function 'todo-read' invoked. Read id: ${id}`)
@@ -443,12 +443,12 @@ So far we have created our `todo-create` function done and we've seen how we mak
     ```js
     /* code from functions/todos-read-all.js */
     import faunadb from 'faunadb'
-    
+
     const q = faunadb.query
     const client = new faunadb.Client({
-      secret: process.env.FAUNADB_SECRET
+      secret: process.env.FAUNADB_SERVER_SECRET
     })
-    
+
     exports.handler = (event, context, callback) => {
       console.log("Function `todo-read-all` invoked")
       return client.query(q.Paginate(q.Match(q.Ref("indexes/all_todos"))))
@@ -488,12 +488,12 @@ So far we have created our `todo-create` function done and we've seen how we mak
     /* code from functions/todos-update.js */
     import faunadb from 'faunadb'
     import getId from './utils/getId'
-    
+
     const q = faunadb.query
     const client = new faunadb.Client({
-      secret: process.env.FAUNADB_SECRET
+      secret: process.env.FAUNADB_SERVER_SECRET
     })
-    
+
     exports.handler = (event, context, callback) => {
       const data = JSON.parse(event.body)
       const id = getId(event.path)
@@ -527,12 +527,12 @@ So far we have created our `todo-create` function done and we've seen how we mak
     /* code from functions/todos-delete.js */
     import faunadb from 'faunadb'
     import getId from './utils/getId'
-    
+
     const q = faunadb.query
     const client = new faunadb.Client({
-      secret: process.env.FAUNADB_SECRET
+      secret: process.env.FAUNADB_SERVER_SECRET
     })
-    
+
     exports.handler = (event, context, callback) => {
       const id = getId(event.path)
       console.log(`Function 'todo-delete' invoked. delete id: ${id}`)
@@ -566,12 +566,12 @@ So far we have created our `todo-create` function done and we've seen how we mak
     /* code from functions/todos-delete-batch.js */
     import faunadb from 'faunadb'
     import getId from './utils/getId'
-    
+
     const q = faunadb.query
     const client = new faunadb.Client({
-      secret: process.env.FAUNADB_SECRET
+      secret: process.env.FAUNADB_SERVER_SECRET
     })
-    
+
     exports.handler = (event, context, callback) => {
       const data = JSON.parse(event.body)
       console.log('data', data)

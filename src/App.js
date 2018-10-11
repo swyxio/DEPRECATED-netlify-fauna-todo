@@ -20,7 +20,7 @@ export default class App extends Component {
         if (isLocalHost()) {
           alert('FaunaDB key is not unauthorized. Make sure you set it in terminal session where you ran `npm start`. Visit http://bit.ly/set-fauna-key for more info')
         } else {
-          alert('FaunaDB key is not unauthorized. Verify the key `FAUNADB_SECRET` set in Netlify enviroment variables is correct')
+          alert('FaunaDB key is not unauthorized. Verify the key `FAUNADB_SERVER_SECRET` set in Netlify enviroment variables is correct')
         }
         return false
       }
