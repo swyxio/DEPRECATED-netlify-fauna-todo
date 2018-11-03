@@ -1,4 +1,4 @@
-# Netlify + FaunaDB &nbsp;&nbsp;&nbsp;<a href="https://deploy-preview-2272--app.netlify.com/start/deploy?repository=https://github.com/biilmann/jamstack-fauna-demo&stack=fauna"><img src="https://www.netlify.com/img/deploy/button.svg"></a>
+# Netlify + FaunaDB &nbsp;&nbsp;&nbsp;<a href="https://app.netlify.com/start/deploy?repository=https://github.com/netlify/fauna-one-click&stack=fauna"><img src="https://www.netlify.com/img/deploy/button.svg"></a>
 
 Example of using [FaunaDB](https://fauna.com/) with [Netlify functions](https://www.netlify.com/docs/functions/)
 
@@ -9,8 +9,7 @@ Example of using [FaunaDB](https://fauna.com/) with [Netlify functions](https://
 - [Tutorial](#tutorial)
   * [Background](#background)
   * [1. Create React app](#1-create-react-app)
-  * [2. Setup FaunaDB](#2-setup-faunadb)
-  * [3. Create a function](#3-create-a-function)
+  * [2. Create a function](#2-create-a-function)
     + [Anatomy of a Lambda function](#anatomy-of-a-lambda-function)
     + [Setting up functions for local development](#setting-up-functions-for-local-development)
   * [4. Connect the function to the frontend app](#4-connect-the-function-to-the-frontend-app)
@@ -38,23 +37,7 @@ This application is using [React](https://reactjs.org/) for the frontend, [Netli
     npm install
     ```
 
-3. Bootstrap your FaunaDB table
-
-    ```bash
-    npm run bootstrap
-    ```
-
-4. Set your Fauna API key value in your terminal enviroment
-
-    You can create faunaDB keys here: https://dashboard.fauna.com/db/keys
-
-    In your terminal run the following command:
-
-    ```bash
-    export FAUNADB_SERVER_SECRET=YourFaunaDBKeyHere
-    ```
-
-5. Run project locally
+3. Run project locally
 
     ```bash
     npm start
@@ -62,11 +45,9 @@ This application is using [React](https://reactjs.org/) for the frontend, [Netli
 
 ## TLDR; Quick Deploy
 
-1. Click the [Deploy to Netlify Button](https://deploy-preview-2272--app.netlify.com/start/deploy?repository=https://github.com/biilmann/jamstack-fauna-demo&stack=fauna)
+1. Click the [Deploy to Netlify Button](https://app.netlify.com/start/deploy?repository=https://github.com/netlify/fauna-one-click&stack=fauna)
 
 [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://deploy-preview-2272--app.netlify.com/start/deploy?repository=https://github.com/biilmann/jamstack-fauna-demo&stack=fauna)
-
-![setup steps](https://user-images.githubusercontent.com/532272/42069927-28e1c436-7b09-11e8-96e9-272987fc9e15.gif)
 
 ## Tutorial
 
@@ -108,62 +89,7 @@ Fan of vanillaJS? By all means, have at it!
     npm start
     ```
 
-### 2. Setup FaunaDB
-
-We are using FaunaDB to hold and store all of our todo data.
-
-So setup a FaunaDB account and get our API key we will use to scaffold out our todos database.
-
-Head over to [https://app.fauna.com/sign-up](https://app.fauna.com/sign-up) to create a free Fauna Account.
-
-1. **Sign up**
-
-    ![Sign up for Fauna](https://user-images.githubusercontent.com/532272/42112825-ff5d7804-7b9d-11e8-846b-54861fe88f97.png)
-
-2. **Create a key**
-
-    ![Create a fauna key](https://user-images.githubusercontent.com/532272/42112862-24b1cd9e-7b9e-11e8-8b77-7d2f0a981c65.png)
-
-3. **Name your key and create**
-
-    ![Name the fauna key and create](https://user-images.githubusercontent.com/532272/42112890-4653439c-7b9e-11e8-9573-361843c590aa.png)
-
-4. **Copy this API key for later use, or [Deploy to Netlify Button](https://app.netlify.com/start/deploy?repository=https://github.com/netlify/netlify-faunadb-example) and plugin this API key.**
-
-    ![Copy API key for future use](https://user-images.githubusercontent.com/532272/42112934-6d6499e0-7b9e-11e8-81ea-be57249895b1.png)
-
-5. **Create your FaunaDB database**
-
-    Set the FaunaDB API key locally in your terminal
-
-    ```bash
-    # on mac
-    export FAUNADB_SERVER_SECRET=YourFaunaDBKeyHere
-    # on windows
-    set FAUNADB_SERVER_SECRET=YourFaunaDBKeyHere
-    ```
-
-    Add the [/scripts/bootstrap-fauna-database.js](https://github.com/netlify/netlify-faunadb-example/blob/f965df497f0de507c2dfdb1a8a32a81bbd939314/scripts/bootstrap-fauna-database.js) to the root directory of the project. This is an idempotent script that you can run 1 million times and have the same result (one todos database)
-
-    Next up, add the bootstrap command to npm scripts in your `package.json` file
-
-    ```json
-    {
-      "scripts": {
-        "bootstrap": "node ./scripts/bootstrap-fauna-database.js"
-      }
-    }
-    ```
-
-    Now we can run the `bootstrap` command to setup our Fauna database in our FaunaDB account.
-
-    ```bash
-    npm run bootstrap
-    ```
-
-    If you login to the [FaunaDB dashboard](https://dashboard.fauna.com] you will see your todo database.
-
-### 3. Create a function
+### 2. Create a function
 
 Now, lets create a function for our app and wire that up to run locally.
 
@@ -318,38 +244,38 @@ Lets rock and roll.
     ```js
     /* code from functions/todos-create.js */
     import faunadb from 'faunadb' /* Import faunaDB sdk */
-
+    
     /* configure faunaDB Client with our secret */
     const q = faunadb.query
     const client = new faunadb.Client({
       secret: process.env.FAUNADB_SERVER_SECRET
     })
-
+    
     /* export our lambda function as named "handler" export */
     exports.handler = (event, context, callback) => {
       /* parse the string body into a useable JS object */
       const data = JSON.parse(event.body)
-      console.log("Function `todo-create` invoked", data)
+      console.log('Hello webinar. Function `todo-create` invoked', data)
       const todoItem = {
         data: data
       }
       /* construct the fauna query */
-      return client.query(q.Create(q.Ref("classes/todos"), todoItem))
-      .then((response) => {
-        console.log("success", response)
-        /* Success! return the response with statusCode 200 */
-        return callback(null, {
-          statusCode: 200,
-          body: JSON.stringify(response)
+      return client.query(q.Create(q.Ref('classes/todos'), todoItem))
+        .then((response) => {
+          console.log('success', response)
+          /* Success! return the response with statusCode 200 */
+          return callback(null, {
+            statusCode: 200,
+            body: JSON.stringify(response)
+          })
+        }).catch((error) => {
+          console.log('error', error)
+          /* Error! return the error with statusCode 400 */
+          return callback(null, {
+            statusCode: 400,
+            body: JSON.stringify(error)
+          })
         })
-      }).catch((error) => {
-        console.log("error", error)
-        /* Error! return the error with statusCode 400 */
-        return callback(null, {
-          statusCode: 400,
-          body: JSON.stringify(error)
-        })
-      })
     }
     ```
     <!-- AUTO-GENERATED-CONTENT:END -->
@@ -405,29 +331,29 @@ So far we have created our `todo-create` function done and we've seen how we mak
     /* code from functions/todos-read.js */
     import faunadb from 'faunadb'
     import getId from './utils/getId'
-
+    
     const q = faunadb.query
     const client = new faunadb.Client({
       secret: process.env.FAUNADB_SERVER_SECRET
     })
-
+    
     exports.handler = (event, context, callback) => {
       const id = getId(event.path)
       console.log(`Function 'todo-read' invoked. Read id: ${id}`)
       return client.query(q.Get(q.Ref(`classes/todos/${id}`)))
-      .then((response) => {
-        console.log("success", response)
-        return callback(null, {
-          statusCode: 200,
-          body: JSON.stringify(response)
+        .then((response) => {
+          console.log('success', response)
+          return callback(null, {
+            statusCode: 200,
+            body: JSON.stringify(response)
+          })
+        }).catch((error) => {
+          console.log('error', error)
+          return callback(null, {
+            statusCode: 400,
+            body: JSON.stringify(error)
+          })
         })
-      }).catch((error) => {
-        console.log("error", error)
-        return callback(null, {
-          statusCode: 400,
-          body: JSON.stringify(error)
-        })
-      })
     }
     ```
     <!-- AUTO-GENERATED-CONTENT:END -->
@@ -441,37 +367,37 @@ So far we have created our `todo-create` function done and we've seen how we mak
     ```js
     /* code from functions/todos-read-all.js */
     import faunadb from 'faunadb'
-
+    
     const q = faunadb.query
     const client = new faunadb.Client({
       secret: process.env.FAUNADB_SERVER_SECRET
     })
-
+    
     exports.handler = (event, context, callback) => {
-      console.log("Function `todo-read-all` invoked")
-      return client.query(q.Paginate(q.Match(q.Ref("indexes/all_todos"))))
-      .then((response) => {
-        const todoRefs = response.data
-        console.log("Todo refs", todoRefs)
-        console.log(`${todoRefs.length} todos found`)
-        // create new query out of todo refs. http://bit.ly/2LG3MLg
-        const getAllTodoDataQuery = todoRefs.map((ref) => {
-          return q.Get(ref)
-        })
-        // then query the refs
-        return client.query(getAllTodoDataQuery).then((ret) => {
+      console.log('Function `todo-read-all` invoked')
+      return client.query(q.Paginate(q.Match(q.Ref('indexes/all_todos'))))
+        .then((response) => {
+          const todoRefs = response.data
+          console.log('Todo refs', todoRefs)
+          console.log(`${todoRefs.length} todos found`)
+          // create new query out of todo refs. http://bit.ly/2LG3MLg
+          const getAllTodoDataQuery = todoRefs.map((ref) => {
+            return q.Get(ref)
+          })
+          // then query the refs
+          return client.query(getAllTodoDataQuery).then((ret) => {
+            return callback(null, {
+              statusCode: 200,
+              body: JSON.stringify(ret)
+            })
+          })
+        }).catch((error) => {
+          console.log('error', error)
           return callback(null, {
-            statusCode: 200,
-            body: JSON.stringify(ret)
+            statusCode: 400,
+            body: JSON.stringify(error)
           })
         })
-      }).catch((error) => {
-        console.log("error", error)
-        return callback(null, {
-          statusCode: 400,
-          body: JSON.stringify(error)
-        })
-      })
     }
     ```
     <!-- AUTO-GENERATED-CONTENT:END -->
@@ -486,30 +412,30 @@ So far we have created our `todo-create` function done and we've seen how we mak
     /* code from functions/todos-update.js */
     import faunadb from 'faunadb'
     import getId from './utils/getId'
-
+    
     const q = faunadb.query
     const client = new faunadb.Client({
       secret: process.env.FAUNADB_SERVER_SECRET
     })
-
+    
     exports.handler = (event, context, callback) => {
       const data = JSON.parse(event.body)
       const id = getId(event.path)
       console.log(`Function 'todo-update' invoked. update id: ${id}`)
       return client.query(q.Update(q.Ref(`classes/todos/${id}`), {data}))
-      .then((response) => {
-        console.log("success", response)
-        return callback(null, {
-          statusCode: 200,
-          body: JSON.stringify(response)
+        .then((response) => {
+          console.log('success', response)
+          return callback(null, {
+            statusCode: 200,
+            body: JSON.stringify(response)
+          })
+        }).catch((error) => {
+          console.log('error', error)
+          return callback(null, {
+            statusCode: 400,
+            body: JSON.stringify(error)
+          })
         })
-      }).catch((error) => {
-        console.log("error", error)
-        return callback(null, {
-          statusCode: 400,
-          body: JSON.stringify(error)
-        })
-      })
     }
     ```
     <!-- AUTO-GENERATED-CONTENT:END -->
@@ -525,29 +451,29 @@ So far we have created our `todo-create` function done and we've seen how we mak
     /* code from functions/todos-delete.js */
     import faunadb from 'faunadb'
     import getId from './utils/getId'
-
+    
     const q = faunadb.query
     const client = new faunadb.Client({
       secret: process.env.FAUNADB_SERVER_SECRET
     })
-
+    
     exports.handler = (event, context, callback) => {
       const id = getId(event.path)
       console.log(`Function 'todo-delete' invoked. delete id: ${id}`)
       return client.query(q.Delete(q.Ref(`classes/todos/${id}`)))
-      .then((response) => {
-        console.log("success", response)
-        return callback(null, {
-          statusCode: 200,
-          body: JSON.stringify(response)
+        .then((response) => {
+          console.log('success', response)
+          return callback(null, {
+            statusCode: 200,
+            body: JSON.stringify(response)
+          })
+        }).catch((error) => {
+          console.log('error', error)
+          return callback(null, {
+            statusCode: 400,
+            body: JSON.stringify(error)
+          })
         })
-      }).catch((error) => {
-        console.log("error", error)
-        return callback(null, {
-          statusCode: 400,
-          body: JSON.stringify(error)
-        })
-      })
     }
     ```
     <!-- AUTO-GENERATED-CONTENT:END -->
@@ -564,35 +490,35 @@ So far we have created our `todo-create` function done and we've seen how we mak
     /* code from functions/todos-delete-batch.js */
     import faunadb from 'faunadb'
     import getId from './utils/getId'
-
+    
     const q = faunadb.query
     const client = new faunadb.Client({
       secret: process.env.FAUNADB_SERVER_SECRET
     })
-
+    
     exports.handler = (event, context, callback) => {
       const data = JSON.parse(event.body)
       console.log('data', data)
-      console.log("Function `todo-delete-batch` invoked", data.ids)
+      console.log('Function `todo-delete-batch` invoked', data.ids)
       // construct batch query from IDs
       const deleteAllCompletedTodoQuery = data.ids.map((id) => {
         return q.Delete(q.Ref(`classes/todos/${id}`))
       })
       // Hit fauna with the query to delete the completed items
       return client.query(deleteAllCompletedTodoQuery)
-      .then((response) => {
-        console.log("success", response)
-        return callback(null, {
-          statusCode: 200,
-          body: JSON.stringify(response)
+        .then((response) => {
+          console.log('success', response)
+          return callback(null, {
+            statusCode: 200,
+            body: JSON.stringify(response)
+          })
+        }).catch((error) => {
+          console.log('error', error)
+          return callback(null, {
+            statusCode: 400,
+            body: JSON.stringify(error)
+          })
         })
-      }).catch((error) => {
-        console.log("error", error)
-        return callback(null, {
-          statusCode: 400,
-          body: JSON.stringify(error)
-        })
-      })
     }
     ```
     <!-- AUTO-GENERATED-CONTENT:END -->
