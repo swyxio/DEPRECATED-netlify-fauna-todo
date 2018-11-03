@@ -47,7 +47,7 @@ This application is using [React](https://reactjs.org/) for the frontend, [Netli
 
 1. Click the [Deploy to Netlify Button](https://app.netlify.com/start/deploy?repository=https://github.com/netlify/fauna-one-click&stack=fauna)
 
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://deploy-preview-2272--app.netlify.com/start/deploy?repository=https://github.com/biilmann/jamstack-fauna-demo&stack=fauna)
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/netlify/fauna-one-click&stack=fauna)
 
 ## Tutorial
 
@@ -244,13 +244,13 @@ Lets rock and roll.
     ```js
     /* code from functions/todos-create.js */
     import faunadb from 'faunadb' /* Import faunaDB sdk */
-    
+
     /* configure faunaDB Client with our secret */
     const q = faunadb.query
     const client = new faunadb.Client({
       secret: process.env.FAUNADB_SERVER_SECRET
     })
-    
+
     /* export our lambda function as named "handler" export */
     exports.handler = (event, context, callback) => {
       /* parse the string body into a useable JS object */
@@ -331,12 +331,12 @@ So far we have created our `todo-create` function done and we've seen how we mak
     /* code from functions/todos-read.js */
     import faunadb from 'faunadb'
     import getId from './utils/getId'
-    
+
     const q = faunadb.query
     const client = new faunadb.Client({
       secret: process.env.FAUNADB_SERVER_SECRET
     })
-    
+
     exports.handler = (event, context, callback) => {
       const id = getId(event.path)
       console.log(`Function 'todo-read' invoked. Read id: ${id}`)
@@ -367,12 +367,12 @@ So far we have created our `todo-create` function done and we've seen how we mak
     ```js
     /* code from functions/todos-read-all.js */
     import faunadb from 'faunadb'
-    
+
     const q = faunadb.query
     const client = new faunadb.Client({
       secret: process.env.FAUNADB_SERVER_SECRET
     })
-    
+
     exports.handler = (event, context, callback) => {
       console.log('Function `todo-read-all` invoked')
       return client.query(q.Paginate(q.Match(q.Ref('indexes/all_todos'))))
@@ -412,12 +412,12 @@ So far we have created our `todo-create` function done and we've seen how we mak
     /* code from functions/todos-update.js */
     import faunadb from 'faunadb'
     import getId from './utils/getId'
-    
+
     const q = faunadb.query
     const client = new faunadb.Client({
       secret: process.env.FAUNADB_SERVER_SECRET
     })
-    
+
     exports.handler = (event, context, callback) => {
       const data = JSON.parse(event.body)
       const id = getId(event.path)
@@ -451,12 +451,12 @@ So far we have created our `todo-create` function done and we've seen how we mak
     /* code from functions/todos-delete.js */
     import faunadb from 'faunadb'
     import getId from './utils/getId'
-    
+
     const q = faunadb.query
     const client = new faunadb.Client({
       secret: process.env.FAUNADB_SERVER_SECRET
     })
-    
+
     exports.handler = (event, context, callback) => {
       const id = getId(event.path)
       console.log(`Function 'todo-delete' invoked. delete id: ${id}`)
@@ -490,12 +490,12 @@ So far we have created our `todo-create` function done and we've seen how we mak
     /* code from functions/todos-delete-batch.js */
     import faunadb from 'faunadb'
     import getId from './utils/getId'
-    
+
     const q = faunadb.query
     const client = new faunadb.Client({
       secret: process.env.FAUNADB_SERVER_SECRET
     })
-    
+
     exports.handler = (event, context, callback) => {
       const data = JSON.parse(event.body)
       console.log('data', data)
