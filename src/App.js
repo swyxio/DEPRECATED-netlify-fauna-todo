@@ -1,4 +1,5 @@
-import React, { Component } from 'react'
+import React, {createRef, useEffect} from 'react'
+import { useProduceState } from './hooks'
 import ContentEditable from './components/ContentEditable'
 import AppHeader from './components/AppHeader'
 import SettingsMenu from './components/SettingsMenu'
@@ -8,12 +9,19 @@ import sortByDate from './utils/sortByDate'
 import isLocalHost from './utils/isLocalHost'
 import './App.css'
 
-export default class App extends Component {
-  state = {
+const inputElement = createRef()
+export default function App {
+  const [state, setState] = useProduceState ({
     todos: [],
     showMenu: false
+  })
+  const closeModal = (e) => {
+    setState(draft => void draft.showMenu = false)
   }
-  componentDidMount() {
+  const openModal = () => {
+    setState(draft => void draft.showMenu = true)
+  }
+  useEffect(() => {
     // Fetch all todos
     api.readAll().then((todos) => {
       if (todos.message === 'unauthorized') {
@@ -24,26 +32,22 @@ export default class App extends Component {
         }
         return false
       }
-
-      console.log('all todos', todos)
-      this.setState({
-        todos: todos
-      })
+      setState(draft => void draft.todos = todos)
     })
-  }
-  saveTodo = (e) => {
+  }, [])
+  const saveTodo = (e) => {
     e.preventDefault()
-    const { todos } = this.state
-    const todoValue = this.inputElement.value
+    const { todos } = state
+    const todoValue = inputElement.current.value
 
     if (!todoValue) {
       alert('Please add Todo title')
-      this.inputElement.focus()
+      inputElement.current.focus()
       return false
     }
 
     // reset input to empty
-    this.inputElement.value = ''
+    inputElement.current.value = ''
 
     const todoInfo = {
       title: todoValue,
@@ -57,29 +61,23 @@ export default class App extends Component {
 
     const optimisticTodoState = newTodoArray.concat(todos)
 
-    this.setState({
-      todos: optimisticTodoState
-    })
+    setState(draft => void draft.todos = optimisticTodoState)
     // Make API request to create new todo
     api.create(todoInfo).then((response) => {
-      console.log(response)
+      // console.log(response)
       // remove temporaryValue from state and persist API response
       const persistedState = removeOptimisticTodo(todos).concat(response)
       // Set persisted value to state
-      this.setState({
-        todos: persistedState
-      })
+      setState(draft => void draft.todos = persistedState)
     }).catch((e) => {
       console.log('An API error occurred', e)
       const revertedState = removeOptimisticTodo(todos)
       // Reset to original state
-      this.setState({
-        todos: revertedState
-      })
+      setState(draft => void draft.todos = revertedState)
     })
   }
-  deleteTodo = (e) => {
-    const { todos } = this.state
+  const deleteTodo = (e) => {
+    const { todos } = state
     const todoId = e.target.dataset.id
 
     // Optimistically remove todo from UI
@@ -98,9 +96,7 @@ export default class App extends Component {
       optimisticState: []
     })
 
-    this.setState({
-      todos: filteredTodos.optimisticState
-    })
+    setState(draft => void draft.todos = filteredTodos.optimisticState)
 
     // Make API request to delete todo
     api.delete(todoId).then(() => {
@@ -108,13 +104,11 @@ export default class App extends Component {
     }).catch((e) => {
       console.log(`There was an error removing ${todoId}`, e)
       // Add item removed back to list
-      this.setState({
-        todos: filteredTodos.optimisticState.concat(filteredTodos.rollbackTodo)
-      })
+      setState(draft => void draft.todos = filteredTodos.optimisticState.concat(filteredTodos.rollbackTodo))
     })
   }
-  handleTodoCheckbox = (event) => {
-    const { todos } = this.state
+  const handleTodoCheckbox = (event) => {
+    const { todos } = state
     const { target } = event
     const todoCompleted = target.checked
     const todoId = target.dataset.id
@@ -128,9 +122,7 @@ export default class App extends Component {
       return todo
     })
 
-    this.setState({
-      todos: updatedTodos
-    }, () => {
+    setState(draft => void draft.todos = updatedTodos, () => {
       api.update(todoId, {
         completed: todoCompleted
       }).then(() => {
@@ -140,11 +132,11 @@ export default class App extends Component {
       })
     })
   }
-  updateTodoTitle = (event, currentValue) => {
+  const updateTodoTitle = (event, currentValue) => {
     let isDifferent = false
     const todoId = event.target.dataset.key
 
-    const updatedTodos = this.state.todos.map((todo, i) => {
+    const updatedTodos = state.todos.map((todo, i) => {
       const id = getTodoId(todo)
       if (id === todoId && todo.data.title !== currentValue) {
         todo.data.title = currentValue
@@ -155,9 +147,8 @@ export default class App extends Component {
 
     // only set state if input different
     if (isDifferent) {
-      this.setState({
-        todos: updatedTodos
-      }, () => {
+
+      setState(draft => void draft.todos = updatedTodos, () => {
         api.update(todoId, {
           title: currentValue
         }).then(() => {
@@ -168,8 +159,8 @@ export default class App extends Component {
       })
     }
   }
-  clearCompleted = () => {
-    const { todos } = this.state
+  const clearCompleted = () => {
+    const { todos } = state
 
     // Optimistically remove todos from UI
     const data = todos.reduce((acc, current) => {
@@ -189,15 +180,13 @@ export default class App extends Component {
     // only set state if completed todos exist
     if (!data.completedTodoIds.length) {
       alert('Please check off some todos to batch remove them')
-      this.closeModal()
+      closeModal()
       return false
     }
 
-    this.setState({
-      todos: data.optimisticState
-    }, () => {
+    setState(draft => void draft.todos = data.optimisticState, () => {
       setTimeout(() => {
-        this.closeModal()
+        closeModal()
       }, 600)
 
       api.batchDelete(data.completedTodoIds).then(() => {
@@ -208,18 +197,8 @@ export default class App extends Component {
     })
 
   }
-  closeModal = (e) => {
-    this.setState({
-      showMenu: false
-    })
-  }
-  openModal = () => {
-    this.setState({
-      showMenu: true
-    })
-  }
   renderTodos() {
-    const { todos } = this.state
+    const { todos } = state
 
     if (!todos || !todos.length) {
       // Loading State here
@@ -238,7 +217,7 @@ export default class App extends Component {
       let deleteButton
       if (ref) {
         deleteButton = (
-          <button data-id={id} onClick={this.deleteTodo}>
+          <button data-id={id} onClick={deleteTodo}>
             delete
           </button>
         )
@@ -251,7 +230,7 @@ export default class App extends Component {
               data-id={id}
               className="todo__state"
               type="checkbox"
-              onChange={this.handleTodoCheckbox}
+              onChange={handleTodoCheckbox}
               checked={data.completed}
             />
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 25" className="todo__icon">
@@ -262,7 +241,7 @@ export default class App extends Component {
               <ContentEditable
                 tagName='span'
                 editKey={id}
-                onBlur={this.updateTodoTitle} // save on enter/blur
+                onBlur={updateTodoTitle} // save on enter/blur
                 html={data.title}
                 // onChange={this.handleDataChange} // save on change
               />
@@ -273,7 +252,6 @@ export default class App extends Component {
       )
     })
   }
-  render() {
     return (
       <div className='app'>
 
@@ -282,14 +260,14 @@ export default class App extends Component {
         <div className='todo-list'>
           <h2>
             Create todo
-            <SettingsIcon onClick={this.openModal} className='mobile-toggle' />
+            <SettingsIcon onClick={openModal} className='mobile-toggle' />
           </h2>
-          <form className='todo-create-wrapper' onSubmit={this.saveTodo}>
+          <form className='todo-create-wrapper' onSubmit={saveTodo}>
             <input
               className='todo-create-input'
               placeholder='Add a todo item'
               name='name'
-              ref={el => this.inputElement = el}
+              ref={inputElement}
               autoComplete='off'
               style={{marginRight: 20}}
             />
@@ -297,20 +275,19 @@ export default class App extends Component {
               <button className='todo-create-button'>
                 Create todo
               </button>
-              <SettingsIcon onClick={this.openModal}  className='desktop-toggle' />
+              <SettingsIcon onClick={openModal}  className='desktop-toggle' />
             </div>
           </form>
 
-          {this.renderTodos()}
+          {renderTodos()}
         </div>
         <SettingsMenu
-          showMenu={this.state.showMenu}
-          handleModalClose={this.closeModal}
-          handleClearCompleted={this.clearCompleted}
+          showMenu={state.showMenu}
+          handleModalClose={closeModal}
+          handleClearCompleted={clearCompleted}
         />
       </div>
     )
-  }
 }
 
 function removeOptimisticTodo(todos) {
