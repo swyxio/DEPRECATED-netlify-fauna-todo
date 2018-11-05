@@ -10,8 +10,6 @@ if (!process.env.FAUNADB_SERVER_SECRET) {
   console.log('Please run `netlify addons:create fauna-staging` and redeploy');
   return false;
 }
-console.log('FAUNADB_SERVER_SECRET', process.env.FAUNADB_SERVER_SECRET);
-console.log('FAUNADB_ADMIN_SECRET', process.env.FAUNADB_ADMIN_SECRET);
 
 console.log(chalk.cyan('Creating your FaunaDB Database...\n'));
 if (insideNetlify) {
