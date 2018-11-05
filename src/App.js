@@ -1,6 +1,5 @@
 import React, { createRef, useEffect, useState } from 'react';
 import produce from 'immer';
-// import { useProduceState } from './hooks';
 import ContentEditable from './components/ContentEditable';
 import AppHeader from './components/AppHeader';
 import SettingsMenu from './components/SettingsMenu';
@@ -266,7 +265,7 @@ export default function App() {
                 tagName="span"
                 editKey={id}
                 onBlur={updateTodoTitle} // save on enter/blur
-                html={data.title}
+                content={data.title}
                 // onChange={this.handleDataChange} // save on change
               />
             </div>

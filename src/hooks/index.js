@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-// we're using the void syntax just to inline draft mutation https://github.com/mweststrate/immer#inline-shortcuts-using-void
 
-import produce from 'immer';
 export function useProduceState(initState) {
   const [state, setState] = useState(initState);
   const cb = (mutator, next) => {
