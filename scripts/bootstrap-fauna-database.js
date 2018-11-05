@@ -4,7 +4,7 @@ const faunadb = require('faunadb');
 const chalk = require('chalk');
 const insideNetlify = insideNetlifyBuildContext();
 const q = faunadb.query;
-
+console.log('---', process.env.FAUNADB_SERVER_SECRET);
 if (!process.env.FAUNADB_SERVER_SECRET) {
   console.log('No FAUNADB_SERVER_SECRET found');
   console.log('Please run `netlify addons:create fauna-staging` and redeploy');
