@@ -1,5 +1,5 @@
 /* fork of https://github.com/lovasoa/react-contenteditable */
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 
 // after
 export default React.memo(function Editable(props) {
