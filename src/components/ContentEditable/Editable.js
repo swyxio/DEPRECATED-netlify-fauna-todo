@@ -38,8 +38,8 @@ export default React.memo(function Editable(props) {
     ...props2,
     ref: htmlElRef.current,
     onKeyDown: preventEnter,
-    onInput: emitChange,
-    onBlur: props.onBlur || emitChange,
+    // onInput: emitChange,
+    onBlur: props.onBlur, // || emitChange,
     contentEditable: !props.disabled
   };
 
