@@ -31,13 +31,15 @@ export default React.memo(function Editable(props) {
   //   lastHtml.current = html;
   // };
 
-  const { TagName = 'div', html, onChange, ...props2 } = props;
+  const { tagName = 'div', content, onChange, ...props2 } = props;
 
   // const domNodeType = tagName || 'div';
+  const TagName = tagName;
   const elementProps = {
     ...props2,
     ref: htmlElRef.current,
     onKeyDown: preventEnter,
+    children: content,
     // onInput: emitChange,
     onBlur: props.onBlur, // || emitChange,
     contentEditable: !props.disabled
