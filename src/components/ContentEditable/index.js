@@ -3,7 +3,7 @@ import Editable from './Editable';
 import './ContentEditable.css';
 
 export default function ContentEditable(props) {
-  const [state, setState] = useState({ disabled: true });
+  const [state, setState] = useState(true);
   const focusRef = useRef(false);
   const handleClick = e => {
     e.preventDefault();
@@ -18,18 +18,14 @@ export default function ContentEditable(props) {
       }, 0);
     }
     // end hacks to give the contenteditable block a better UX
-    setState({
-      disabled: false
-    });
+    setState(false);
   };
   const handleClickOutside = evt => {
     const event = evt || window.event;
     // presist blur event for react
     event.persist();
     const value = evt.target.value || evt.target.innerText;
-    setState({
-      disabled: true
-    });
+    setState(true);
     focusRef.current = false; // reset single click functionality
     if (props.onBlur) {
       props.onBlur(evt, value);
@@ -46,7 +42,7 @@ export default function ContentEditable(props) {
       onClick={handleClick}
       onBlur={handleClickOutside}
       html={content}
-      disabled={state.disabled}
+      disabled={state}
       onChange={onChange}
     />
   );

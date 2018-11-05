@@ -15,11 +15,8 @@ export default React.memo(function Editable(props) {
   const preventEnter = evt => {
     if (evt.which === 13) {
       evt.preventDefault();
-
       const htmlEl = htmlElRef.current;
-      if (!htmlEl) {
-        return false;
-      }
+      if (!htmlEl) return false;
       htmlEl.blur();
       return false;
     }
@@ -27,9 +24,7 @@ export default React.memo(function Editable(props) {
   const lastHtml = useRef();
   const emitChange = evt => {
     const htmlEl = htmlElRef.current;
-    if (!htmlEl) {
-      return false;
-    }
+    if (!htmlEl) return false;
     const html = htmlEl.innerHTML;
     if (props.onChange && html !== lastHtml.current) {
       evt.target.value = html;

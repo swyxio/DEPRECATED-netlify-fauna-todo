@@ -1,6 +1,6 @@
-import React, { createRef, useEffect } from 'react';
+import React, { createRef, useEffect, useState } from 'react';
 import produce from 'immer';
-import { useProduceState } from './hooks';
+// import { useProduceState } from './hooks';
 import ContentEditable from './components/ContentEditable';
 import AppHeader from './components/AppHeader';
 import SettingsMenu from './components/SettingsMenu';
@@ -11,17 +11,13 @@ import isLocalHost from './utils/isLocalHost';
 import './App.css';
 
 const inputElement = createRef();
+
+// best 👍
 export default function App() {
-  const [state, setState] = useProduceState({
-    todos: [],
-    showMenu: false
-  });
-  const closeModal = e => {
-    setState(draft => (draft.showMenu = false));
-  };
-  const openModal = () => {
-    setState(draft => (draft.showMenu = true));
-  };
+  const [todos, setTodos] = useState([]);
+  const [showMenu, setShowMenu] = useState(false);
+  const closeModal = e => setShowMenu(false);
+  const openModal = () => setShowMenu(true);
   useEffect(() => {
     // Fetch all todos
     api.readAll().then(todos => {
@@ -37,14 +33,12 @@ export default function App() {
         }
         return false;
       }
-      setState(draft => (draft.todos = todos));
+      setTodos(todos);
     });
   }, []);
   const saveTodo = e => {
     e.preventDefault();
-    const { todos } = state;
     const todoValue = inputElement.current.value;
-
     if (!todoValue) {
       alert('Please add Todo title');
       inputElement.current.focus();
@@ -68,7 +62,7 @@ export default function App() {
 
     const optimisticTodoState = newTodoArray.concat(todos);
 
-    setState(draft => (draft.todos = optimisticTodoState));
+    setTodos(optimisticTodoState);
     // Make API request to create new todo
     api
       .create(todoInfo)
@@ -77,17 +71,16 @@ export default function App() {
         // remove temporaryValue from state and persist API response
         const persistedState = removeOptimisticTodo(todos).concat(response);
         // Set persisted value to state
-        setState(draft => (draft.todos = persistedState));
+        setTodos(persistedState);
       })
       .catch(e => {
         console.log('An API error occurred', e);
         const revertedState = removeOptimisticTodo(todos);
         // Reset to original state
-        setState(draft => (draft.todos = revertedState));
+        setTodos(revertedState);
       });
   };
   const deleteTodo = e => {
-    const { todos } = state;
     const todoId = e.target.dataset.id;
 
     // Optimistically remove todo from UI
@@ -109,7 +102,7 @@ export default function App() {
       }
     );
 
-    setState(draft => (draft.todos = filteredTodos.optimisticState));
+    setTodos(filteredTodos.optimisticState);
 
     // Make API request to delete todo
     api
@@ -120,16 +113,12 @@ export default function App() {
       .catch(e => {
         console.log(`There was an error removing ${todoId}`, e);
         // Add item removed back to list
-        setState(
-          draft =>
-            (draft.todos = filteredTodos.optimisticState.concat(
-              filteredTodos.rollbackTodo
-            ))
+        setTodos(
+          filteredTodos.optimisticState.concat(filteredTodos.rollbackTodo)
         );
       });
   };
   const handleTodoCheckbox = event => {
-    const { todos } = state;
     const { target } = event;
     const todoCompleted = target.checked;
     const todoId = target.dataset.id;
@@ -144,28 +133,24 @@ export default function App() {
       });
     });
 
-    setState(
-      draft => (draft.todos = updatedTodos),
-      () => {
-        api
-          .update(todoId, {
-            completed: todoCompleted
-          })
-          .then(() => {
-            console.log(`update todo ${todoId}`, todoCompleted);
-          })
-          .catch(e => {
-            console.log('An API error occurred', e);
-          });
-      }
-    );
+    setTodos(updatedTodos);
+    api
+      .update(todoId, {
+        completed: todoCompleted
+      })
+      .then(() => {
+        console.log(`update todo ${todoId}`, todoCompleted);
+      })
+      .catch(e => {
+        console.log('An API error occurred', e);
+      });
   };
   const updateTodoTitle = (event, currentValue) => {
     console.log('updateTodoTitle', event);
     let isDifferent = false;
     const todoId = event.target.dataset.key;
 
-    const updatedTodos = state.todos.map((todo, i) => {
+    const updatedTodos = todos.map((todo, i) => {
       return produce(todo, draft => {
         const id = getTodoId(draft);
         if (id === todoId && draft.data.title !== currentValue) {
@@ -179,26 +164,20 @@ export default function App() {
 
     // only set state if input different
     if (isDifferent) {
-      setState(
-        draft => (draft.todos = updatedTodos),
-        () => {
-          api
-            .update(todoId, {
-              title: currentValue
-            })
-            .then(() => {
-              console.log(`update todo ${todoId}`, currentValue);
-            })
-            .catch(e => {
-              console.log('An API error occurred', e);
-            });
-        }
-      );
+      setTodos(updatedTodos);
+      api
+        .update(todoId, {
+          title: currentValue
+        })
+        .then(() => {
+          console.log(`update todo ${todoId}`, currentValue);
+        })
+        .catch(e => {
+          console.log('An API error occurred', e);
+        });
     }
   };
   const clearCompleted = () => {
-    const { todos } = state;
-
     // Optimistically remove todos from UI
     const data = todos.reduce(
       (acc, current) => {
@@ -226,27 +205,21 @@ export default function App() {
       return false;
     }
 
-    setState(
-      draft => (draft.todos = data.optimisticState),
-      () => {
-        setTimeout(() => {
-          closeModal();
-        }, 600);
+    setTodos(data.optimisticState);
+    setTimeout(() => {
+      closeModal();
+    }, 600);
 
-        api
-          .batchDelete(data.completedTodoIds)
-          .then(() => {
-            console.log(`Batch removal complete`, data.completedTodoIds);
-          })
-          .catch(e => {
-            console.log('An API error occurred', e);
-          });
-      }
-    );
+    api
+      .batchDelete(data.completedTodoIds)
+      .then(() => {
+        console.log(`Batch removal complete`, data.completedTodoIds);
+      })
+      .catch(e => {
+        console.log('An API error occurred', e);
+      });
   };
   function renderTodos() {
-    const { todos } = state;
-
     if (!todos || !todos.length) {
       // Loading State here
       return null;
@@ -330,7 +303,7 @@ export default function App() {
         {renderTodos()}
       </div>
       <SettingsMenu
-        showMenu={state.showMenu}
+        showMenu={showMenu}
         handleModalClose={closeModal}
         handleClearCompleted={clearCompleted}
       />
