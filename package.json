@@ -25,6 +25,8 @@
     "test": "react-scripts test --env=jsdom"
   },
   "devDependencies": {
+    "@babel/plugin-transform-object-assign": "^7.0.0",
+    "babel-loader": "^8.0.4",
     "markdown-magic": "^0.1.23",
     "netlify-lambda": "^1.0.0",
     "npm-run-all": "^4.1.3"
