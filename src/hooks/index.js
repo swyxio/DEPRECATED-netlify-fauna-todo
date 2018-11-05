@@ -1,22 +1,36 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import produce from 'immer';
-import api from '../utils/api';
 // we're using the void syntax just to inline draft mutation https://github.com/mweststrate/immer#inline-shortcuts-using-void
 
+import produce from 'immer';
 export function useProduceState(initState) {
   const [state, setState] = useState(initState);
-  const cb = (mutator, next) => setState(s => produce(s, mutator), next);
+  const cb = (mutator, next) => {
+    setState(s => produce(s, d => void mutator(d)));
+    if (next) next();
+  };
   return [state, useCallback(cb, [setState])];
 }
 
+// // usage
+// const [state, setState] = useProduceState({
+//   todos: [],
+//   showMenu: false
+// });
+// const closeModal = e => {
+//   setState(draft => draft.showMenu = false);
+// };
+
 export function useKeydown(key, handler) {
-  const cb = useCallback(e => e.key === key && handler(e), [key, handler]);
-  useEffect(() => {
-    document.body.addEventListener('keydown', cb);
-    return () => {
-      document.body.removeEventListener('keydown', cb);
-    };
-  });
+  useEffect(
+    () => {
+      const cb = e => e.key === key && handler(e);
+      document.body.addEventListener('keydown', cb);
+      return () => {
+        document.body.removeEventListener('keydown', cb);
+      };
+    },
+    [key, handler]
+  );
 }
 
 // export function useOptimisticState(initState) {

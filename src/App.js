@@ -17,10 +17,10 @@ export default function App() {
     showMenu: false
   });
   const closeModal = e => {
-    setState(draft => void (draft.showMenu = false));
+    setState(draft => (draft.showMenu = false));
   };
   const openModal = () => {
-    setState(draft => void (draft.showMenu = true));
+    setState(draft => (draft.showMenu = true));
   };
   useEffect(() => {
     // Fetch all todos
@@ -37,7 +37,7 @@ export default function App() {
         }
         return false;
       }
-      setState(draft => void (draft.todos = todos));
+      setState(draft => (draft.todos = todos));
     });
   }, []);
   const saveTodo = e => {
@@ -68,7 +68,7 @@ export default function App() {
 
     const optimisticTodoState = newTodoArray.concat(todos);
 
-    setState(draft => void (draft.todos = optimisticTodoState));
+    setState(draft => (draft.todos = optimisticTodoState));
     // Make API request to create new todo
     api
       .create(todoInfo)
@@ -77,13 +77,13 @@ export default function App() {
         // remove temporaryValue from state and persist API response
         const persistedState = removeOptimisticTodo(todos).concat(response);
         // Set persisted value to state
-        setState(draft => void (draft.todos = persistedState));
+        setState(draft => (draft.todos = persistedState));
       })
       .catch(e => {
         console.log('An API error occurred', e);
         const revertedState = removeOptimisticTodo(todos);
         // Reset to original state
-        setState(draft => void (draft.todos = revertedState));
+        setState(draft => (draft.todos = revertedState));
       });
   };
   const deleteTodo = e => {
@@ -109,7 +109,7 @@ export default function App() {
       }
     );
 
-    setState(draft => void (draft.todos = filteredTodos.optimisticState));
+    setState(draft => (draft.todos = filteredTodos.optimisticState));
 
     // Make API request to delete todo
     api
@@ -122,7 +122,7 @@ export default function App() {
         // Add item removed back to list
         setState(
           draft =>
-            void (draft.todos = filteredTodos.optimisticState.concat(
+            (draft.todos = filteredTodos.optimisticState.concat(
               filteredTodos.rollbackTodo
             ))
         );
@@ -145,7 +145,7 @@ export default function App() {
     });
 
     setState(
-      draft => void (draft.todos = updatedTodos),
+      draft => (draft.todos = updatedTodos),
       () => {
         api
           .update(todoId, {
@@ -161,6 +161,7 @@ export default function App() {
     );
   };
   const updateTodoTitle = (event, currentValue) => {
+    console.log('updateTodoTitle', event);
     let isDifferent = false;
     const todoId = event.target.dataset.key;
 
@@ -179,7 +180,7 @@ export default function App() {
     // only set state if input different
     if (isDifferent) {
       setState(
-        draft => void (draft.todos = updatedTodos),
+        draft => (draft.todos = updatedTodos),
         () => {
           api
             .update(todoId, {
@@ -226,7 +227,7 @@ export default function App() {
     }
 
     setState(
-      draft => void (draft.todos = data.optimisticState),
+      draft => (draft.todos = data.optimisticState),
       () => {
         setTimeout(() => {
           closeModal();

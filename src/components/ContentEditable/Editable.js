@@ -1,66 +1,59 @@
 /* fork of https://github.com/lovasoa/react-contenteditable */
-import React from 'react'
+import React, { useRef, useEffect } from 'react';
 
-export default class Editable extends React.Component {
-  shouldComponentUpdate(nextProps) {
-    // We need not rerender if the change of props simply reflects the user's
-    // edits. Rerendering in this case would make the cursor/caret jump.
-    return (
-      // Rerender if there is no element yet...
-      !this.htmlEl
-      // ...or if html really changed... (programmatically, not by user edit)
-      || (nextProps.html !== this.htmlEl.innerHTML
-        && nextProps.html !== this.props.html)
-      // ...or if editing is enabled or disabled.
-      || this.props.disabled !== nextProps.disabled
-    )
-  }
-  componentDidUpdate() {
-    if (this.htmlEl && this.props.html !== this.htmlEl.innerHTML) {
+// after
+export default React.memo(function Editable(props) {
+  const htmlElRef = useRef();
+  useEffect(() => {
+    const htmlEl = htmlElRef.current;
+    if (htmlEl && props.html !== htmlEl.innerHTML) {
       // Perhaps React (whose VDOM gets outdated because we often prevent
       // rerendering) did not update the DOM. So we update it manually now.
-      this.htmlEl.innerHTML = this.props.html
+      htmlEl.innerHTML = props.html;
     }
-  }
-  preventEnter = (evt) => {
+  });
+  const preventEnter = evt => {
     if (evt.which === 13) {
-      evt.preventDefault()
-      if (!this.htmlEl) {
-        return false
+      evt.preventDefault();
+
+      const htmlEl = htmlElRef.current;
+      if (!htmlEl) {
+        return false;
       }
-      this.htmlEl.blur()
-      return false
+      htmlEl.blur();
+      return false;
     }
-  }
-  emitChange = (evt) => {
-    if (!this.htmlEl) {
-      return false
+  };
+  const lastHtml = useRef();
+  const emitChange = evt => {
+    const htmlEl = htmlElRef.current;
+    if (!htmlEl) {
+      return false;
     }
-    const html = this.htmlEl.innerHTML
-    if (this.props.onChange && html !== this.lastHtml) {
-      evt.target.value = html
-      this.props.onChange(evt, html)
+    const html = htmlEl.innerHTML;
+    if (props.onChange && html !== lastHtml.current) {
+      evt.target.value = html;
+      props.onChange(evt, html);
     }
-    this.lastHtml = html
-  }
-  render() {
-    const { tagName, html, onChange, ...props } = this.props
+    lastHtml.current = html;
+  };
 
-    const domNodeType = tagName || 'div'
-    const elementProps = {
-      ...props,
-      ref: (e) => this.htmlEl = e,
-      onKeyDown: this.preventEnter,
-      onInput: this.emitChange,
-      onBlur: this.props.onBlur || this.emitChange,
-      contentEditable: !this.props.disabled,
-    }
+  const { tagName, html, onChange, ...props2 } = props;
 
-    let children = this.props.children
-    if (html) {
-      elementProps.dangerouslySetInnerHTML = { __html: html }
-      children = null
-    }
-    return React.createElement(domNodeType, elementProps, children)
+  const domNodeType = tagName || 'div';
+  const elementProps = {
+    ...props2,
+    ref: htmlElRef.current,
+    onKeyDown: preventEnter,
+    onInput: emitChange,
+    onBlur: props.onBlur || emitChange,
+    contentEditable: !props.disabled
+  };
+
+  let children = props.children;
+  if (html) {
+    elementProps.dangerouslySetInnerHTML = { __html: html };
+    children = null;
   }
-}
+  return React.createElement(domNodeType, elementProps, children);
+});
