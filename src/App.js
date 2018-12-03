@@ -1,41 +1,49 @@
 import React, { useState } from 'react';
 import { Router, Link } from '@reach/router';
-import TodoModel from './TodoModel';
 
 import './App.css';
+import TodoModel from './TodoModel';
+import useLogin from './Login';
+const model = new TodoModel('react-todos');
 
-let Home = () => <div>Home</div>;
-let List = props => (
-  <div>
-    <h3>List</h3>
-    <pre>{JSON.stringify(props, null, 2)}</pre>
-  </div>
-);
+let Home = () => {
+  const { current } = React.useRef(model);
+  const { user, doLogout, doLogin } = useLogin(current.onAuthChange);
+  console.log(current);
+  console.log(process.env.REACT_APP_FAUNADB_SERVER_SECRET);
+  console.log(process.env.NODE_ENV);
+  return (
+    <div>
+      Home
+      <div className="Login">
+        {user ? (
+          <a onClick={doLogout}>Logout</a>
+        ) : (
+          <span>
+            <a onClick={doLogin}>Login or Sign Up</a>
+          </span>
+        )}
+      </div>
+    </div>
+  );
+};
+// let List = props => (
+//   <div>
+//     <h3>List</h3>
+//     <pre>{JSON.stringify(props, null, 2)}</pre>
+//   </div>
+// );
 const NotFound = () => <div>Sorry, nothing here.</div>;
 
-const modelRef = React.useRef(new TodoModel('react-todos'));
 export default function App(props) {
-  const [faunaToken, setFaunaToken] = useState(null);
-  const [editing, setEditing] = useState(null);
-  const [newTodo, setNewTodo] = useState('');
-  const handleChange = e => setNewTodo(e.target.value);
-  const handleNewTodoKeyDown = event => {
-    if (event.keyCode !== 13) return;
-    event.preventDefault();
-    var val = newTodo.trim();
-    if (val) {
-      props.model.addList(val);
-      setNewTodo('');
-    }
-  };
   return (
     <Router>
       <Home path="/" />
-      <div path="list">
+      {/* <div path="list">
         <List path=":listId" />
         <List path=":listId/active" />
         <List path=":listId/completed" />
-      </div>
+      </div> */}
       <NotFound default />
     </Router>
   );

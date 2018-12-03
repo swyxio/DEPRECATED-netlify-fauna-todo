@@ -19,7 +19,7 @@
     "checkForFaunaKey": "node ./scripts/check-for-fauna-key.js",
     "start": "npm-run-all --parallel checkForFaunaKey start:app start:server",
     "start:app": "react-scripts start",
-    "start:server": "netlify-lambda serve functions -c ./webpack.config.js",
+    "start:server": "netlify-lambda serve functions",
     "prebuild": "echo 'setup faunaDB' && npm run bootstrap",
     "build": "npm-run-all --parallel build:**",
     "build:app": "react-scripts build",
@@ -31,8 +31,9 @@
   "devDependencies": {
     "@babel/plugin-transform-object-assign": "^7.0.0",
     "babel-loader": "^8.0.4",
+    "generate-password": "^1.4.1",
     "markdown-magic": "^0.1.23",
-    "netlify-lambda": "^1.0.3",
+    "netlify-lambda": "^1.1.0",
     "npm-run-all": "^4.1.5"
   },
   "browserslist": [

@@ -68,27 +68,30 @@ export default function useLogin(onAuthChange) {
     clearLogin();
     setUser(null);
   };
-  React.useEffect(() => {
-    var existingUser = localStorage.getItem('faunaNetlifyUser');
-    if (existingUser) {
-      setUser(JSON.parse(existingUser));
-      didLogin('noSave');
-    } else {
-      existingUser = saveLogin(); // does calling user pop a thing? should we set state?
+  var existingUser = localStorage.getItem('faunaNetlifyUser');
+  React.useEffect(
+    () => {
       if (existingUser) {
-        setUser(existingUser);
+        setUser(JSON.parse(existingUser));
         didLogin('noSave');
+      } else {
+        existingUser = saveLogin(); // does calling user pop a thing? should we set state?
+        if (existingUser) {
+          setUser(existingUser);
+          didLogin('noSave');
+        }
       }
-    }
-    netlifyIdentity.on('login', user => {
-      setUser(user);
-      didLogin();
-    });
-    netlifyIdentity.on('logout', user => {
-      setUser(null);
-      didLogout();
-    });
-  });
+      netlifyIdentity.on('login', user => {
+        setUser(user);
+        didLogin();
+      });
+      netlifyIdentity.on('logout', user => {
+        setUser(null);
+        didLogout();
+      });
+    },
+    [existingUser]
+  );
 
   return {
     user,
