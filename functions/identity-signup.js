@@ -1,8 +1,8 @@
 'use strict';
 console.log('step 1');
-const faunadb = require('faunadb');
+import faunadb from 'faunadb';
 console.log('step 2');
-const generator = require('generate-password');
+import generator from 'generate-password';
 
 console.log(
   'process.env.FAUNADB_SERVER_SECRET',
