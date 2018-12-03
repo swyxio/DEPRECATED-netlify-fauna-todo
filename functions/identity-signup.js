@@ -1,6 +1,13 @@
 'use strict';
+console.log('step 1');
 const faunadb = require('faunadb');
+console.log('step 2');
 const generator = require('generate-password');
+
+console.log(
+  'process.env.FAUNADB_SERVER_SECRET',
+  process.env.FAUNADB_SERVER_SECRET
+);
 
 /* configure faunaDB Client with our secret */
 const q = faunadb.query;
@@ -8,10 +15,6 @@ const client = new faunadb.Client({
   secret: process.env.FAUNADB_SERVER_SECRET
 });
 
-console.log(
-  'process.env.FAUNADB_SERVER_SECRET',
-  process.env.FAUNADB_SERVER_SECRET
-);
 /* create a user in FaunaDB that can connect from the browser */
 function createUser(userData, password) {
   console.log('createuser', userData, password);
