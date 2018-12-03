@@ -6,7 +6,7 @@ import App from './App';
 ReactDOM.render(
   <ConcurrentMode>
     <StrictMode>
-      <App />
+      <App model={model} />
     </StrictMode>
   </ConcurrentMode>,
   document.getElementById('root')

@@ -11,6 +11,9 @@ if (!process.env.FAUNADB_SERVER_SECRET) {
   return false;
 }
 
+console.log('server', process.env.FAUNADB_SERVER_SECRET);
+console.log('admin', process.env.FAUNADB_ADMIN_SECRET);
+
 console.log(chalk.cyan('Creating your FaunaDB Database...\n'));
 if (insideNetlify) {
   // Run idempotent database creation
@@ -46,22 +49,82 @@ function createFaunaDB(key) {
 
   /* Based on your requirements, change the schema here */
   return client
-    .query(q.Create(q.Ref('classes'), { name: 'todos' }))
-    .then(() => {
-      return client.query(
-        q.Create(q.Ref('indexes'), {
-          name: 'all_todos',
-          source: q.Ref('classes/todos')
-        })
-      );
-    })
+    .query(
+      q.CreateClass({
+        name: 'users'
+      })
+    )
+    .then(() =>
+      client.query(
+        q.Do(
+          q.CreateClass({
+            name: 'todos',
+            permissions: {
+              create: q.Class('users')
+            }
+          }),
+          q.CreateClass({
+            name: 'lists',
+            permissions: {
+              create: q.Class('users')
+            }
+          })
+        )
+      )
+    )
+    .then(() =>
+      client.query(
+        q.Do(
+          q.CreateIndex({
+            name: 'users_by_id',
+            source: q.Class('users'),
+            terms: [
+              {
+                field: ['data', 'id']
+              }
+            ],
+            unique: true
+          }),
+          q.CreateIndex({
+            // this index is optional but useful in development for browsing users
+            name: `all_users`,
+            source: q.Class('users')
+          }),
+          q.CreateIndex({
+            name: 'all_todos',
+            source: q.Class('todos'),
+            permissions: {
+              read: q.Class('users')
+            }
+          }),
+          q.CreateIndex({
+            name: 'all_lists',
+            source: q.Class('lists'),
+            permissions: {
+              read: q.Class('users')
+            }
+          }),
+          q.CreateIndex({
+            name: 'todos_by_list',
+            source: q.Class('todos'),
+            terms: [
+              {
+                field: ['data', 'list']
+              }
+            ],
+            permissions: {
+              read: q.Class('users')
+            }
+          })
+        )
+      )
+    )
+    .then(console.log.bind(console))
     .catch(e => {
-      // Database already exists
-      if (
-        e.requestResult.statusCode === 400 &&
-        e.message === 'instance not unique'
-      ) {
-        console.log('DB already exists');
+      if (e.message === 'instance not unique') {
+        console.log('schema already created... skipping');
+      } else {
+        console.error(e);
         throw e;
       }
     });

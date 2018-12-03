@@ -1,0 +1,15 @@
+{
+  "name": "identity-signup",
+  "version": "0.1.0",
+  "description": "Attach a FaunaDB user to your Netlify/GoTrue users",
+  "main": "identity-signup.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "J Chris Anderson",
+  "license": "ISC",
+  "dependencies": {
+    "faunadb": "^2.5.2",
+    "generate-password": "^1.4.1"
+  }
+}
