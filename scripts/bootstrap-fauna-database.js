@@ -54,72 +54,79 @@ function createFaunaDB(key) {
         name: 'users'
       })
     )
-    .then(() =>
-      client.query(
-        q.Do(
-          q.CreateClass({
-            name: 'todos',
-            permissions: {
-              create: q.Class('users')
-            }
-          }),
-          q.CreateClass({
-            name: 'lists',
-            permissions: {
-              create: q.Class('users')
-            }
-          })
-        )
-      )
-    )
-    .then(() =>
-      client.query(
-        q.Do(
-          q.CreateIndex({
-            name: 'users_by_id',
-            source: q.Class('users'),
-            terms: [
-              {
-                field: ['data', 'id']
+    .then(
+      () =>
+        console.log('==> 1. createusers success') ||
+        client.query(
+          q.Do(
+            q.CreateClass({
+              name: 'todos',
+              permissions: {
+                create: q.Class('users')
               }
-            ],
-            unique: true
-          }),
-          q.CreateIndex({
-            // this index is optional but useful in development for browsing users
-            name: `all_users`,
-            source: q.Class('users')
-          }),
-          q.CreateIndex({
-            name: 'all_todos',
-            source: q.Class('todos'),
-            permissions: {
-              read: q.Class('users')
-            }
-          }),
-          q.CreateIndex({
-            name: 'all_lists',
-            source: q.Class('lists'),
-            permissions: {
-              read: q.Class('users')
-            }
-          }),
-          q.CreateIndex({
-            name: 'todos_by_list',
-            source: q.Class('todos'),
-            terms: [
-              {
-                field: ['data', 'list']
+            }),
+            q.CreateClass({
+              name: 'lists',
+              permissions: {
+                create: q.Class('users')
               }
-            ],
-            permissions: {
-              read: q.Class('users')
-            }
-          })
+            })
+          )
         )
-      )
     )
-    .then(console.log.bind(console))
+    .then(
+      () =>
+        console.log('==> 2. create todos and lists success') ||
+        client.query(
+          q.Do(
+            q.CreateIndex({
+              name: 'users_by_id',
+              source: q.Class('users'),
+              terms: [
+                {
+                  field: ['data', 'id']
+                }
+              ],
+              unique: true
+            }),
+            q.CreateIndex({
+              // this index is optional but useful in development for browsing users
+              name: `all_users`,
+              source: q.Class('users')
+            }),
+            q.CreateIndex({
+              name: 'all_todos',
+              source: q.Class('todos'),
+              permissions: {
+                read: q.Class('users')
+              }
+            }),
+            q.CreateIndex({
+              name: 'all_lists',
+              source: q.Class('lists'),
+              permissions: {
+                read: q.Class('users')
+              }
+            }),
+            q.CreateIndex({
+              name: 'todos_by_list',
+              source: q.Class('todos'),
+              terms: [
+                {
+                  field: ['data', 'list']
+                }
+              ],
+              permissions: {
+                read: q.Class('users')
+              }
+            })
+          )
+        )
+    )
+    .then(
+      console.log('==> 3. create  eveyrthing success') ||
+        console.log.bind(console)
+    )
     .catch(e => {
       if (e.message === 'instance not unique') {
         console.log('schema already created... skipping');
