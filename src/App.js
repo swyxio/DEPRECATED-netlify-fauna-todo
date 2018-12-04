@@ -12,7 +12,7 @@ let Home = () => {
   const { user, doLogout, doLogin, authedFetch } = useNetlifyIdentity(
     current.onAuthChange
   );
-  console.log(current);
+  console.log({ current });
   console.log(process.env.REACT_APP_FAUNADB_SERVER_SECRET);
   console.log(process.env.NODE_ENV);
   return (

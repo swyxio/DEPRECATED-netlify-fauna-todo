@@ -3,6 +3,8 @@ import React from 'react';
 // -------------- usage --------------
 import netlifyIdentity from 'netlify-identity-widget';
 import { useLocalStorage } from '.';
+// import faunadb from 'faunadb';
+
 netlifyIdentity.init();
 export default function useNetlifyIdentity(onAuthChange) {
   if (!onAuthChange) throw new Error('onAuthChange cannot be falsy');
