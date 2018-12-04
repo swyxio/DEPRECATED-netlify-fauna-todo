@@ -1,7 +1,5 @@
 'use strict';
-console.log('step 1');
 import faunadb from 'faunadb';
-console.log('step 2');
 import generator from 'generate-password';
 
 console.log(
@@ -33,15 +31,11 @@ function createUser(userData, password) {
 
 function obtainToken(user, password) {
   console.log('obtainToken', user, password);
-
   console.log('creating FaunaDB token for ' + user);
   return client.query(q.Login(q.Select('ref', user), { password }));
 }
 
-function handler(event, context, callback) {
-  var payload = JSON.parse(event.body);
-  var userData = payload.user;
-
+export function signupUser(userData) {
   const password = generator.generate({
     length: 10,
     numbers: true
@@ -74,4 +68,9 @@ function handler(event, context, callback) {
       });
     });
 }
-module.exports = { handler: handler };
+
+// export function handler(event, context, callback) {
+//   var payload = JSON.parse(event.body);
+//   var userData = payload.user;
+//   signupUser(userData);
+// }

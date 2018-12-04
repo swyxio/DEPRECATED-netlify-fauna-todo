@@ -1,11 +1,43 @@
 import { useState, useEffect, useCallback } from 'react';
-
 import produce from 'immer';
+
+// -------------- source code --------------
+const noop = () => {};
+export function useLocalStorage(key, optionalCallback = noop) {
+  const [state, setState] = useState(null);
+  useEffect(() => {
+    // chose to make this async
+    const existingValue = localStorage.getItem(key);
+    if (existingValue) {
+      const parsedValue = JSON.parse(existingValue);
+      setState(parsedValue);
+      optionalCallback(parsedValue);
+    }
+  }, []);
+  const removeItem = () => {
+    setState(null);
+    localStorage.removeItem(key);
+    optionalCallback(null);
+  };
+  const setItem = obj => {
+    setState(obj);
+    localStorage.setItem(key, JSON.stringify(obj));
+    optionalCallback(obj);
+  };
+  return [state, setItem, removeItem];
+}
+
 export function useProduceState(initState) {
   const [state, setState] = useState(initState);
-  const cb = (mutator, next) => {
-    setState(s => produce(s, d => void mutator(d)));
-    if (next) next();
+  const cb = (mutatorOrValue, next) => {
+    if (isFunction(mutatorOrValue)) {
+      // is a function, put it through immer
+      setState(s => produce(s, d => void mutatorOrValue(d)));
+    } else {
+      // is a value
+      setState(mutatorOrValue);
+    }
+    if (next) next(); // post setState callback
   };
   return [state, useCallback(cb, [setState])];
 }
@@ -72,3 +104,10 @@ export function useKeydown(key, handler) {
 //     </div>
 //   );
 // }
+
+// https://stackoverflow.com/questions/5999998/how-can-i-check-if-a-javascript-variable-is-function-type
+function isFunction(functionToCheck) {
+  return (
+    functionToCheck && {}.toString.call(functionToCheck) === '[object Function]'
+  );
+}

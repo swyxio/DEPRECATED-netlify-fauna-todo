@@ -42,6 +42,7 @@ export default class TodoModel {
   }
 
   onAuthChange(faunadb_token) {
+    if (!faunadb_token) return null;
     this.listDatas = {};
     // this.listId = null;
     this.todosData = {};

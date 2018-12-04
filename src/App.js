@@ -15,6 +15,15 @@ let Home = () => {
   return (
     <div>
       Home
+      <button
+        onClick={() =>
+          fetch('.netlify/functions/fauna-gateway')
+            .then(res => res.json())
+            .then(console.log)
+        }
+      >
+        sldkjsd2
+      </button>
       <div className="Login">
         {user ? (
           <a onClick={doLogout}>Logout</a>
@@ -27,12 +36,23 @@ let Home = () => {
     </div>
   );
 };
-// let List = props => (
-//   <div>
-//     <h3>List</h3>
-//     <pre>{JSON.stringify(props, null, 2)}</pre>
-//   </div>
-// );
+const LoggedIn = props => {
+  return (
+    <div>
+      dlskjd
+      <a onClick={props.doLogout}>Logout</a>
+      <button
+        onClick={() =>
+          fetch('.netlify/functions/fauna-gateway')
+            .then(res => res.json())
+            .then(console.log)
+        }
+      >
+        sldkjsd
+      </button>
+    </div>
+  );
+};
 const NotFound = () => <div>Sorry, nothing here.</div>;
 
 export default function App(props) {

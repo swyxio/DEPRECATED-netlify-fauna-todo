@@ -20,7 +20,7 @@
     "checkForFaunaKey": "node ./scripts/check-for-fauna-key.js",
     "start": "npm-run-all --parallel checkForFaunaKey start:app start:server",
     "start:app": "react-scripts start",
-    "start:server": "netlify-lambda serve functions",
+    "start:server": "netlify-lambda -c ./webpack.config.js serve functions",
     "prebuild": "echo 'setup faunaDB' && npm run bootstrap",
     "build": "npm-run-all --parallel build:**",
     "build:app": "react-scripts build",
