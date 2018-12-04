@@ -13,25 +13,25 @@ export default class TodoModel {
     this.onChanges = [];
   }
 
-  list() {
+  list = () => {
     return this.listDatas[this.listId];
-  }
+  };
 
-  todos() {
+  todos = () => {
     return this.todosData[this.listId] || [];
-  }
+  };
 
-  subscribe(onChange) {
+  subscribe = onChange => {
     this.onChanges.push(onChange);
-  }
+  };
 
-  processChanges() {
+  processChanges = () => {
     this.onChanges.forEach(function(cb) {
       cb();
     });
-  }
+  };
 
-  inform() {
+  inform = () => {
     this.getServerLists()
       .then(() => {
         if (this.listId) {
@@ -39,7 +39,7 @@ export default class TodoModel {
         }
       })
       .then(() => this.processChanges());
-  }
+  };
 
   onAuthChange = faunadb_token => {
     if (!faunadb_token) return null;
@@ -55,7 +55,7 @@ export default class TodoModel {
     this.inform();
   };
 
-  getServerLists() {
+  getServerLists = () => {
     return this.client
       .query(
         q.Map(
@@ -92,16 +92,16 @@ export default class TodoModel {
           this.lists = r.data;
         }
       });
-  }
+  };
 
-  getList(id) {
+  getList = id => {
     this.listId = id;
     if (this.client) {
       this.fetchList(id).then(() => this.processChanges());
     }
-  }
+  };
 
-  fetchList(id) {
+  fetchList = id => {
     // return {list, todos}
     return this.client.query(q.Get(q.Ref('classes/lists/' + id))).then(list => {
       // console.log("fetchList!", list);
@@ -118,9 +118,9 @@ export default class TodoModel {
           return { list, todos: resp.data };
         });
     });
-  }
+  };
 
-  addList(title) {
+  addList = title => {
     var newList = {
       title: title
     };
@@ -141,9 +141,9 @@ export default class TodoModel {
       .then(r => {
         this.inform();
       });
-  }
+  };
 
-  addTodo(title, list) {
+  addTodo = (title, list) => {
     var newTodo = {
       title: title,
       list: list.ref,
@@ -166,9 +166,9 @@ export default class TodoModel {
       .then(r => {
         this.inform();
       });
-  }
+  };
 
-  toggleAll(checked, list) {
+  toggleAll = (checked, list) => {
     return this.client
       .query(
         q.Map(q.Paginate(q.Match(q.Index('todos_by_list'), list.ref)), ref =>
@@ -182,9 +182,9 @@ export default class TodoModel {
       .then(r => {
         this.inform();
       });
-  }
+  };
 
-  toggle(todoToToggle) {
+  toggle = todoToToggle => {
     console.log('todoToToggle', todoToToggle);
     return this.client
       .query(
@@ -197,13 +197,13 @@ export default class TodoModel {
       .then(r => {
         this.inform();
       });
-  }
+  };
 
-  destroy(todo) {
+  destroy = todo => {
     return this.client.query(q.Delete(todo.ref)).then(() => this.inform());
-  }
+  };
 
-  save(todoToSave, text) {
+  save = (todoToSave, text) => {
     return this.client
       .query(
         q.Update(todoToSave.ref, {
@@ -211,9 +211,9 @@ export default class TodoModel {
         })
       )
       .then(r => this.inform());
-  }
+  };
 
-  clearCompleted(list) {
+  clearCompleted = list => {
     return this.client
       .query(
         q.Map(q.Paginate(q.Match(q.Index('todos_by_list'), list.ref)), ref =>
@@ -225,5 +225,5 @@ export default class TodoModel {
         )
       )
       .then(r => this.inform());
-  }
+  };
 }
