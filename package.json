@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@reach/router": "^1.2.1",
+    "axios": "^0.18.0",
     "faunadb": "^2.5.2",
     "generate-password": "^1.4.1",
     "http-proxy-middleware": "^0.19.0",
