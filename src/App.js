@@ -26,7 +26,7 @@ let Home = () => {
       </button>
       <div className="Login">
         {user ? (
-          <LoggedIn doLogout={doLogout} />
+          <LoggedIn doLogout={doLogout} authedFetch={authedFetch} />
         ) : (
           <span>
             <a onClick={doLogin}>Login or Sign Up</a>
@@ -36,11 +36,11 @@ let Home = () => {
     </div>
   );
 };
-const LoggedIn = props => {
+const LoggedIn = ({ doLogout, authedFetch }) => {
   return (
     <div>
       dlskjd
-      <a onClick={props.doLogout}>Logout</a>
+      <a onClick={doLogout}>Logout</a>
       <button
         onClick={() =>
           authedFetch.get('.netlify/functions/fauna-gateway').then(console.log)
