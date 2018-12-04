@@ -24,7 +24,7 @@
     "prebuild": "echo 'setup faunaDB' && npm run bootstrap",
     "build": "npm-run-all --parallel build:**",
     "build:app": "react-scripts build",
-    "build:functions": "netlify-lambda build functions"
+    "build:functions": "netlify-lambda build functions -c ./webpack.config.js"
   },
   "devDependencies": {
     "@babel/plugin-transform-object-assign": "^7.0.0",
