@@ -3,9 +3,9 @@ import React from 'react';
 
 // -------------- usage --------------
 import netlifyIdentity from 'netlify-identity-widget';
-import { useLocalStorage } from './hooks';
+import { useLocalStorage } from '.';
 netlifyIdentity.init();
-export default function useLogin(onAuthChange) {
+export default function useNetlifyIdentity(onAuthChange) {
   if (!onAuthChange) throw new Error('onAuthChange cannot be falsy');
   const itemChangeCallback = _user => {
     if (_user) {
@@ -34,7 +34,27 @@ export default function useLogin(onAuthChange) {
   return {
     user: item,
     doLogout: netlifyIdentity.logout,
-    doLogin: () => netlifyIdentity.open()
+    doLogin: () => netlifyIdentity.open(),
+    authedFetch(endpoint, obj = {}) {
+      if (!item || !item.token || !item.token.access_token)
+        throw new Error('no user token found');
+      const defaultObj = {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + item.token.access_token
+        }
+      };
+      function genericAuthedFetch(method) {
+        return fetch(endpoint, Object.assign(defaultObj, { method }, obj));
+      }
+      return {
+        get: genericAuthedFetch('GET'),
+        post: genericAuthedFetch('POST'),
+        put: genericAuthedFetch('PUT'),
+        delete: genericAuthedFetch('DELETE')
+      };
+    }
   };
 }
 
