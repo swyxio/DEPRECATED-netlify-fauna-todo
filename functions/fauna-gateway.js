@@ -8,6 +8,14 @@ export function handler(event, context, callback) {
   if (context.clientContext) {
     // authenticated
     const { identity, user } = context.clientContext;
+
+    // if the request has an auth bearer token with the Netlify identity jwt, `user` will be an object like this:
+    // app_metadata: {provider: "email"}
+    // email: "swyx@netlify.com"
+    // exp: 1543936656
+    // sub: "4273eee0-6c66-431d-bb32-6ce317265e1a" // this is the netlify identity user id
+    // user_metadata: {full_name: "swyx"}
+
     callback(null, {
       statusCode: 200,
       body: JSON.stringify({

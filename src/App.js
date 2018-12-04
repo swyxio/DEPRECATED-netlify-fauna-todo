@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Router, Link } from '@reach/router';
-import axios from 'axios';
+
 import './App.css';
 import './login.css';
 import TodoModel from './TodoModel';
@@ -20,7 +20,9 @@ let Home = () => {
       Home
       <button
         onClick={() =>
-          axios.get('.netlify/functions/fauna-gateway').then(console.log)
+          fetch('.netlify/functions/fauna-gateway')
+            .then(res => res.json())
+            .then(console.log)
         }
       >
         sldkjsd2

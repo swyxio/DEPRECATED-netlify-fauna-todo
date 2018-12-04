@@ -29,6 +29,8 @@ export default function useNetlifyIdentity(onAuthChange) {
     netlifyIdentity.on('login', user => setItem(user));
     netlifyIdentity.on('logout', () => removeItem());
   }, []);
+
+  // definition - `item` comes from  useNetlifyIdentity hook
   const genericAuthedFetch = method => (endpoint, obj = {}) => {
     if (!item || !item.token || !item.token.access_token)
       throw new Error('no user token found');
@@ -50,6 +52,7 @@ export default function useNetlifyIdentity(onAuthChange) {
     put: genericAuthedFetch('PUT'),
     delete: genericAuthedFetch('DELETE')
   };
+
   return {
     user: item,
     doLogout: netlifyIdentity.logout,
