@@ -26,7 +26,7 @@ let Home = () => {
       </button>
       <div className="Login">
         {user ? (
-          <a onClick={doLogout}>Logout</a>
+          <LoggedIn doLogout={doLogout} />
         ) : (
           <span>
             <a onClick={doLogin}>Login or Sign Up</a>
