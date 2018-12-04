@@ -1,7 +1,7 @@
 import React, { ConcurrentMode, StrictMode } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './oldApp';
+import App from './App';
 
 ReactDOM.render(
   <ConcurrentMode>

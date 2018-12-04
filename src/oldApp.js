@@ -13,8 +13,8 @@ let List = props => (
 );
 const NotFound = () => <div>Sorry, nothing here.</div>;
 
-const modelRef = React.useRef(new TodoModel('react-todos'));
 export default function App(props) {
+  const modelRef = React.useRef(new TodoModel('react-todos'));
   const [faunaToken, setFaunaToken] = useState(null);
   const [editing, setEditing] = useState(null);
   const [newTodo, setNewTodo] = useState('');
