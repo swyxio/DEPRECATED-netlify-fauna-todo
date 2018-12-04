@@ -29,31 +29,32 @@ export default function useNetlifyIdentity(onAuthChange) {
     netlifyIdentity.on('login', user => setItem(user));
     netlifyIdentity.on('logout', () => removeItem());
   }, []);
-
+  const genericAuthedFetch = method => (endpoint, obj = {}) => {
+    if (!item || !item.token || !item.token.access_token)
+      throw new Error('no user token found');
+    const defaultObj = {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + item.token.access_token
+      }
+    };
+    const finalObj = Object.assign(defaultObj, { method }, obj);
+    return fetch(endpoint, finalObj).then(res =>
+      finalObj.headers['Content-Type'] === 'application/json' ? res.json() : res
+    );
+  };
+  const authedFetch = {
+    get: genericAuthedFetch('GET'),
+    post: genericAuthedFetch('POST'),
+    put: genericAuthedFetch('PUT'),
+    delete: genericAuthedFetch('DELETE')
+  };
   return {
     user: item,
     doLogout: netlifyIdentity.logout,
     doLogin: () => netlifyIdentity.open(),
-    authedFetch(endpoint, obj = {}) {
-      if (!item || !item.token || !item.token.access_token)
-        throw new Error('no user token found');
-      const defaultObj = {
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + item.token.access_token
-        }
-      };
-      function genericAuthedFetch(method) {
-        return fetch(endpoint, Object.assign(defaultObj, { method }, obj));
-      }
-      return {
-        get: genericAuthedFetch('GET'),
-        post: genericAuthedFetch('POST'),
-        put: genericAuthedFetch('PUT'),
-        delete: genericAuthedFetch('DELETE')
-      };
-    }
+    authedFetch
   };
 }
 
