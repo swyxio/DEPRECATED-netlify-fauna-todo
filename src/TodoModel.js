@@ -41,7 +41,7 @@ export default class TodoModel {
       .then(() => this.processChanges());
   }
 
-  onAuthChange(faunadb_token) {
+  onAuthChange = faunadb_token => {
     if (!faunadb_token) return null;
     this.listDatas = {};
     // this.listId = null;
@@ -53,7 +53,7 @@ export default class TodoModel {
 
     console.log('onAuthChange', faunadb_token);
     this.inform();
-  }
+  };
 
   getServerLists() {
     return this.client
