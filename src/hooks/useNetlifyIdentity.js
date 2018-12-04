@@ -1,4 +1,3 @@
-import './login.css';
 import React from 'react';
 
 // -------------- usage --------------
