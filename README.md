@@ -5,3 +5,7 @@ It is deployed here: https://hooks-suspense-faunadb-todo.netlify.com/
 You can play with it by clicking this: <a href="https://app.netlify.com/start/deploy?repository=https://github.com/sw-yx/hooks-suspense-faunadb-todo&stack=fauna"><img src="https://www.netlify.com/img/deploy/button.svg"></a>
 
 to fork and deploy!
+
+## Dont get your own key
+
+dont get your own key from faunadb. make sure to get it through the netlify cli addon.
