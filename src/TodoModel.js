@@ -56,6 +56,8 @@ export default class TodoModel {
   };
 
   getServerLists = () => {
+    console.log('getServerLists');
+    // return this.client
     return this.client
       .query(
         q.Map(
@@ -69,28 +71,28 @@ export default class TodoModel {
         )
       )
       .then(r => {
-        console.log('getServerLists', r);
-        if (r.data.length === 0) {
-          // create the first list for the user
-          const me = q.Select('ref', q.Get(q.Ref('classes/users/self')));
+        console.log('getServerLists', { r });
+        // if (r.data.length === 0) {
+        //   // create the first list for the user
+        //   const me = q.Select('ref', q.Get(q.Ref('classes/users/self')));
 
-          return this.client
-            .query(
-              q.Create(q.Class('lists'), {
-                data: {
-                  title: 'Default Todo List',
-                  owner: q.Select('ref', q.Get(q.Ref('classes/users/self')))
-                },
-                permissions: {
-                  read: me,
-                  write: me
-                }
-              })
-            )
-            .then(defaultList => (this.lists = [defaultList]));
-        } else {
-          this.lists = r.data;
-        }
+        //   return this.client
+        //     .query(
+        //       q.Create(q.Class('lists'), {
+        //         data: {
+        //           title: 'Default Todo List',
+        //           owner: q.Select('ref', q.Get(q.Ref('classes/users/self')))
+        //         },
+        //         permissions: {
+        //           read: me,
+        //           write: me
+        //         }
+        //       })
+        //     )
+        //     .then(defaultList => (this.lists = [defaultList]));
+        // } else {
+        //   this.lists = r.data;
+        // }
       });
   };
 
