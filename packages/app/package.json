@@ -1,0 +1,46 @@
+{
+  "name": "netlify-fauna",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@reach/router": "^1.2.1",
+    "faunadb": "^2.5.2",
+    "generate-password": "^1.4.1",
+    "http-proxy-middleware": "^0.19.0",
+    "immer": "^1.7.4",
+    "netlify-identity-widget": "^1.4.14",
+    "react": "^16.7.0-alpha.2",
+    "react-cache": "^2.0.0-alpha.1",
+    "react-dom": "^16.7.0-alpha.2",
+    "react-scripts": "^2.1.1",
+    "hooks": "0.0.1",
+    "contexts": "0.0.1",
+    "todomvc-app-css": "^2.0.0",
+    "todomvc-common": "^1.0.1"
+  },
+  "scripts": {
+    "bootstrap": "node ./scripts/bootstrap-fauna-database.js",
+    "docs": "md-magic --path '**/*.md' --ignore 'node_modules'",
+    "checkForFaunaKey": "node ./scripts/check-for-fauna-key.js",
+    "start": "npm-run-all --parallel checkForFaunaKey start:app start:server",
+    "start:app": "react-scripts start",
+    "start:server": "netlify-lambda -c ./webpack.config.js serve functions",
+    "prebuild": "echo 'setup faunaDB' && npm run bootstrap",
+    "build": "npm-run-all --parallel build:**",
+    "build:app": "react-scripts build",
+    "build:functions": "netlify-lambda build functions -c ./webpack.config.js"
+  },
+  "devDependencies": {
+    "@babel/plugin-transform-object-assign": "^7.0.0",
+    "babel-loader": "^8.0.4",
+    "markdown-magic": "^0.1.23",
+    "netlify-lambda": "^1.1.0",
+    "npm-run-all": "^4.1.5"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
+}
