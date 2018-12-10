@@ -3,13 +3,19 @@ import { Router, Link, navigate } from '@reach/router';
 import useFauna from './useFauna';
 import useNetlifyIdentity from 'hooks/useNetlifyIdentity';
 import { FaunaCtx, UserCtx } from 'contexts';
-
+import Footer from './components/Footer';
 import Spinner from './components/Spinner';
 import InputArea from './components/InputArea';
 import TodoItem from './components/TodoItem';
 import './login.css';
 
-const NotFound = () => <div>Sorry, nothing here.</div>;
+const NotFound = () => (
+  <div>
+    <h2>Not found</h2>
+    <p>Sorry, nothing here.</p>
+    <Link to="/">Go back to the main page.</Link>
+  </div>
+);
 
 function Login() {
   const { user, doLogin, doLogout } = useContext(UserCtx);
@@ -34,10 +40,21 @@ function List(props) {
     toggle,
     destroy,
     load,
+    clearCompleted,
     save
   } = useContext(FaunaCtx);
   const [state, setState] = useState(null);
-  const { listId } = props;
+  const { listId, uri } = props;
+  const pathFlag = props.path.split('/')[1] || 'all';
+
+  const shownTodos =
+    state &&
+    state.todos &&
+    {
+      all: state.todos,
+      active: state.todos.filter(todo => !todo.data.completed),
+      completed: state.todos.filter(todo => todo.data.completed)
+    }[pathFlag];
   useEffect(
     () =>
       client &&
@@ -48,8 +65,7 @@ function List(props) {
   );
   const [editing, setEditing] = useState(null);
   const edit = todo => () => setEditing(todo.ref);
-
-  console.log({ state });
+  const onClearCompleted = () => clearCompleted(state.list, listId);
   return isLoading || !state || !state.list ? (
     <Spinner />
   ) : (
@@ -62,7 +78,7 @@ function List(props) {
         {state.err ? (
           <div>{JSON.stringify(state.err, null, 2)} </div>
         ) : (
-          state.todos.map(todo => {
+          shownTodos.map(todo => {
             const handle = fn => () => load(fn(todo, listId).then(setState));
             return (
               <TodoItem
@@ -86,6 +102,21 @@ function List(props) {
         }
         placeholder="Add a new item to your list."
       />
+
+      {state.todos && (
+        <Footer
+          count={shownTodos.length}
+          completedCount={
+            state.todos.filter(todo => todo.data.completed).length
+          }
+          onClearCompleted={onClearCompleted}
+          nowShowing={pathFlag}
+          uri={uri
+            .split('/')
+            .slice(0, 3)
+            .join('/')}
+        />
+      )}
     </div>
   );
 }
@@ -151,7 +182,6 @@ export default function App(props) {
               <NotFound default />
             </Router>
           </header>
-          <footer className="footer">footer</footer>
         </div>
       </UserCtx.Provider>
     </FaunaCtx.Provider>

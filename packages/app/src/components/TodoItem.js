@@ -6,11 +6,7 @@ var ESCAPE_KEY = 27;
 var ENTER_KEY = 13;
 
 class TodoItem extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { editText: this.props.todo.title };
-  }
-
+  state = { editText: this.props.todo.title };
   EditFieldRef = React.createRef();
   handleSubmit = event => {
     var val = this.state.editText.trim();
