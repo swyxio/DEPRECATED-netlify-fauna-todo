@@ -10,7 +10,6 @@ export default function Menu(props) {
       'Are you sure you want to clear all completed todos?'
     );
     if (deleteConfirm) {
-      console.log('delete');
       props.handleClearCompleted();
     }
   };

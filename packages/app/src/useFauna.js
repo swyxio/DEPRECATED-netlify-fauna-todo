@@ -58,7 +58,6 @@ export default function useFauna() {
   }
 
   const fetchList = async id => {
-    console.log({ client });
     if (client) {
       const _list = await client.query(q.Get(q.Ref('classes/lists/' + id)));
       const resp = await client.query(
@@ -122,7 +121,6 @@ export default function useFauna() {
   // };
 
   const toggle = (todoToToggle, id) => {
-    console.log('todoToToggle', todoToToggle);
     return client
       .query(
         q.Update(todoToToggle.ref, {

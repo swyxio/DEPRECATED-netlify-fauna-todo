@@ -13,7 +13,7 @@ const AppHeader = props => {
             <img src={logo} className="app-logo" alt="logo" />
             <div className="app-title-text">
               <h1 className="app-title">Netlify + Fauna DB</h1>
-              <p className="app-intro">Using FaunaDB & Netlify functions</p>
+              {/* <p className="app-intro">Using FaunaDB & Netlify functions</p> */}
             </div>
           </div>
         </div>
@@ -21,7 +21,7 @@ const AppHeader = props => {
           <a
             target="_blank"
             rel="noopener noreferrer"
-            href="https://app.netlify.com/start/deploy?repository=https://github.com/sw-yx/hooks-suspense-faunadb-todo&stack=fauna"
+            href="https://app.netlify.com/start/deploy?repository=https://github.com/sw-yx/netlify-identity-fauna-reddit-clone&stack=fauna"
           >
             <img
               src={deployButton}
@@ -33,7 +33,7 @@ const AppHeader = props => {
             <a
               target="_blank"
               rel="noopener noreferrer"
-              href="https://github.com/sw-yx/hooks-suspense-faunadb-todo"
+              href="https://github.com/sw-yx/netlify-identity-fauna-reddit-clone"
             >
               <img
                 className="github-icon"

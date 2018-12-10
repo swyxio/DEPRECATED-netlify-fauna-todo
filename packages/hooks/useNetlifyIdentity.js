@@ -9,7 +9,6 @@ netlifyIdentity.init();
 export default function useNetlifyIdentity(onAuthChange) {
   if (!onAuthChange) throw new Error('onAuthChange cannot be falsy');
   const itemChangeCallback = _user => {
-    console.log('itemChangeCallback', _user);
     if (_user) {
       const faunadb_token =
         _user && _user.app_metadata && _user.app_metadata.faunadb_token;
@@ -18,7 +17,6 @@ export default function useNetlifyIdentity(onAuthChange) {
         console.error(
           'Expected _user to have a faunadb_token, check logs for the identity-signup.js function.'
         );
-        console.log(_user);
       }
     } else {
       onAuthChange(null);

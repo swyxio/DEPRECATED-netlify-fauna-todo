@@ -43,12 +43,11 @@ export function useProduceState(initState, observer = noop) {
     if (isFunction(mutatorOrValue)) {
       // is a function, put it through immer
       setState(s => produce(s, d => void mutatorOrValue(d)));
-      console.log({ state });
       observer(state);
     } else {
       // is a value
       setState(mutatorOrValue);
-      console.log({ mutatorOrValue });
+
       observer(mutatorOrValue);
     }
     if (next) next(); // post setState callback
