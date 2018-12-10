@@ -1,27 +1,25 @@
 import React from 'react';
 import { useProduceState } from 'hooks';
+import { useLoading } from '@swyx/hooks';
 const faunadb = require('faunadb');
 const q = faunadb.query;
 
 export default function useFauna() {
   const [lists, setLists] = React.useState([]);
-  const [list, setList] = React.useState(null);
-  const [_id, set_id] = React.useState(null);
   const [client, setClient] = useProduceState(null, getServerLists);
-  const onAuthChange = faunadb_token => {
+  const [isLoading, load] = useLoading();
+  const onAuthChange = async faunadb_token => {
     if (!faunadb_token) return null;
     const _client = new faunadb.Client({
       secret: faunadb_token
     });
     setClient(_client);
-    console.log('onAuthChange', faunadb_token, _client);
-    getServerLists(_client);
+    return _client;
   };
 
   function getServerLists(_client = client) {
-    console.log('getServerLists', _client);
     if (!_client) return null;
-    console.log('getServerLists1');
+
     return _client
       .query(
         q.Map(
@@ -34,9 +32,7 @@ export default function useFauna() {
           ref => q.Get(ref)
         )
       )
-      .then(r => console.log('getServerLists') || r)
       .then(r => {
-        console.log({ r });
         if (r.data.length === 0) {
           // create the first list for the user
           const me = q.Select('ref', q.Get(q.Ref('classes/users/self')));
@@ -61,22 +57,17 @@ export default function useFauna() {
       });
   }
 
-  const refreshList = async () => {
-    if (_id) {
-      const _list = await client.query(q.Get(q.Ref('classes/lists/' + _id)));
-      // const resp = await client.query(
-      //   q.Map(q.Paginate(q.Match(q.Index('todos_by_list'), list.ref)), ref =>
-      //     q.Get(ref)
-      //   )
-      // );
-      setList(_list);
-      return _list;
-    }
-  };
-
   const fetchList = async id => {
-    set_id(id);
-    return refreshList();
+    console.log({ client });
+    if (client) {
+      const _list = await client.query(q.Get(q.Ref('classes/lists/' + id)));
+      const resp = await client.query(
+        q.Map(q.Paginate(q.Match(q.Index('todos_by_list'), _list.ref)), ref =>
+          q.Get(ref)
+        )
+      );
+      return { list: _list, todos: resp.data };
+    }
   };
 
   const addList = title => {
@@ -96,7 +87,7 @@ export default function useFauna() {
       .then(getServerLists);
   };
 
-  const addTodo = (title, list) => {
+  const addTodo = (list, id) => title => {
     var newTodo = {
       title: title,
       list: list.ref,
@@ -115,7 +106,7 @@ export default function useFauna() {
           }
         })
       )
-      .then(refreshList);
+      .then(() => fetchList(id));
   };
 
   // const toggleAll = (checked, list) => {
@@ -130,7 +121,7 @@ export default function useFauna() {
   //   );
   // };
 
-  const toggle = todoToToggle => {
+  const toggle = (todoToToggle, id) => {
     console.log('todoToToggle', todoToToggle);
     return client
       .query(
@@ -140,22 +131,23 @@ export default function useFauna() {
           }
         })
       )
-      .then(refreshList);
+      .then(() => fetchList(id));
   };
 
-  const destroy = todo => client.query(q.Delete(todo.ref)).then(refreshList);
+  const destroy = (todo, id) =>
+    client.query(q.Delete(todo.ref)).then(() => fetchList(id));
 
-  const save = (todoToSave, text) => {
+  const save = (todoToSave, text, id) => {
     return client
       .query(
         q.Update(todoToSave.ref, {
           data: { title: text }
         })
       )
-      .then(refreshList);
+      .then(() => fetchList(id));
   };
 
-  const clearCompleted = list => {
+  const clearCompleted = (list, id) => {
     return client
       .query(
         q.Map(q.Paginate(q.Match(q.Index('todos_by_list'), list.ref)), ref =>
@@ -166,19 +158,23 @@ export default function useFauna() {
           )
         )
       )
-      .then(refreshList);
+      .then(() => fetchList(id));
   };
   return {
     lists,
-    list,
+    // list,
     fetchList,
     addList,
     addTodo,
     // toggleAll,
+    getServerLists,
+    load,
     toggle,
     destroy,
     save,
     clearCompleted,
-    onAuthChange
+    onAuthChange,
+    isLoading,
+    client
   };
 }
