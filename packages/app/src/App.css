@@ -28,7 +28,9 @@
   outline: none;
   transition: all 0.3s ease;
 }
-.todo-create-input:hover, .todo-create-input:active, .todo-create-input:focus {
+.todo-create-input:hover,
+.todo-create-input:active,
+.todo-create-input:focus {
   box-shadow: 0px 0px 0px 2px rgb(43, 190, 185);
   box-shadow: 0px 0px 0px 2px #00ad9f;
 }
@@ -50,7 +52,7 @@
   margin-left: 45px;
   width: 470px;
 }
-.todo-list-title:hover span[contenteditable="false"]:before {
+.todo-list-title:hover span[contenteditable='false']:before {
   content: 'click to edit';
   position: absolute;
   top: -6px;
@@ -115,10 +117,10 @@
     align-items: center;
     justify-content: center;
   }
-  .todo-list-title:hover span[contenteditable="false"]:before {
-    content: ''
+  .todo-list-title:hover span[contenteditable='false']:before {
+    content: '';
   }
-  .todo-list-title:hover span[contenteditable="true"]:before {
+  .todo-list-title:hover span[contenteditable='true']:before {
     content: 'click to edit';
     position: absolute;
     top: -20px;
@@ -157,7 +159,7 @@
   height: 100%;
   margin: auto;
   fill: none;
-  stroke: #27FDC7;
+  stroke: #27fdc7;
   stroke-width: 2;
   stroke-linejoin: round;
   stroke-linecap: round;
@@ -174,7 +176,7 @@
   transition-delay: 0.16s;
 }
 .todo__check {
-  stroke: #27FDC7;
+  stroke: #27fdc7;
   stroke-dasharray: 9.8995, 9.8995;
   stroke-dashoffset: 9.8995;
   transition-duration: 0.25s;

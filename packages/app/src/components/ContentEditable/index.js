@@ -32,7 +32,7 @@ export default function ContentEditable(props) {
     }
   };
 
-  const { onChange, content, editKey, tagName } = props;
+  const { content, editKey, tagName } = props;
   return (
     <Editable
       tagName={tagName}
@@ -42,7 +42,6 @@ export default function ContentEditable(props) {
       onBlur={handleClickOutside}
       content={content}
       disabled={state}
-      onChange={onChange}
     />
   );
 }

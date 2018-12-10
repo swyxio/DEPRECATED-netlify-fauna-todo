@@ -137,7 +137,7 @@ export default function useFauna() {
   const destroy = (todo, id) =>
     client.query(q.Delete(todo.ref)).then(() => fetchList(id));
 
-  const save = (todoToSave, text, id) => {
+  const save = text => (todoToSave, id) => {
     return client
       .query(
         q.Update(todoToSave.ref, {

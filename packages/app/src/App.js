@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Router, Link } from '@reach/router';
+import { Router, Link, navigate } from '@reach/router';
 import useFauna from './useFauna';
 import useNetlifyIdentity from 'hooks/useNetlifyIdentity';
 import { useInput } from 'hooks';
@@ -7,8 +7,9 @@ import { FaunaCtx, UserCtx } from 'contexts';
 import { LoggedIn } from './components/LoggedIn';
 import Spinner from './components/Spinner';
 import InputArea from './components/InputArea';
+import TodoItem from './components/TodoItem';
 
-import './App.css';
+// import './App.css';
 import './login.css';
 
 let Home = () => <div>Home2</div>;
@@ -30,31 +31,57 @@ function Login() {
 
 function List(props) {
   // const oldList = React.useRef(null)
-  const { fetchList, isLoading, client, addTodo } = React.useContext(FaunaCtx);
+  const {
+    fetchList,
+    isLoading,
+    client,
+    addTodo,
+    toggle,
+    destroy,
+    load,
+    save
+  } = React.useContext(FaunaCtx);
   const [state, setState] = React.useState(null);
   const { listId } = props;
   React.useEffect(() => client && void fetchList(listId).then(setState), [
     client
   ]);
   const { addList } = React.useContext(FaunaCtx);
-
-  return isLoading || !state ? (
+  const [editing, setEditing] = React.useState(null);
+  const edit = todo => () => setEditing(todo.ref);
+  return isLoading || !state || !state.list ? (
     <Spinner />
   ) : (
-    console.log({ state }) || (
-      <div>
-        <h3>List</h3>
-        <div className="listNav">
-          <label>{state.list.data.title}</label>
-          <button onClick={() => alert('oops')}>back to all lists</button>
-        </div>
-        <pre>{JSON.stringify(state.todos, null, 2)}</pre>
-        <InputArea
-          onSubmit={title => addTodo(state.list, listId)(title).then(setState)}
-          placeholder="Add a new item to your list."
-        />
+    <div>
+      <div className="listNav">
+        <label>{state.list.data.title}</label>
+        <button onClick={() => navigate('/')}>back to all lists</button>
       </div>
-    )
+      <ul className="todo-list">
+        {state.todos.map(todo => {
+          const handle = fn => () => load(fn(todo, listId).then(setState));
+          return (
+            <TodoItem
+              key={todo.ref.value.id}
+              todo={todo.data}
+              onToggle={handle(toggle)}
+              onDestroy={handle(destroy)}
+              onEdit={edit(todo)}
+              editing={editing === todo.ref}
+              onSave={val => handle(save(val))()}
+              onCancel={console.log}
+              // onCancel={this.cancel.bind(this)}
+            />
+          );
+        })}
+      </ul>
+      <InputArea
+        onSubmit={title =>
+          load(addTodo(state.list, listId)(title).then(setState))
+        }
+        placeholder="Add a new item to your list."
+      />
+    </div>
   );
 }
 function AllLists() {
