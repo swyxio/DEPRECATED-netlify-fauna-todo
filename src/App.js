@@ -167,7 +167,7 @@ export default function App(props) {
   const { load, onAuthChange, getServerLists } = fauna;
   const identity = useNetlifyIdentity(faunadb_token => {
     onAuthChange(faunadb_token).then(_client => {
-      load(getServerLists(_client));
+      if (_client) load(getServerLists(_client));
     });
   });
 
