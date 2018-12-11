@@ -1,6 +1,6 @@
 import React from 'react';
-import { useProduceState } from 'hooks';
-import { useLoading } from '@swyx/hooks';
+
+import { useLoading, useProduceState } from '@swyx/hooks';
 const faunadb = require('faunadb');
 const q = faunadb.query;
 

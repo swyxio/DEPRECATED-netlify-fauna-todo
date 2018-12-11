@@ -2,8 +2,7 @@ import React from 'react';
 
 // -------------- usage --------------
 import netlifyIdentity from 'netlify-identity-widget';
-import { useLocalStorage } from '.';
-// import faunadb from 'faunadb';
+import { useLocalStorage } from '@swyx/hooks';
 
 netlifyIdentity.init();
 export default function useNetlifyIdentity(onAuthChange) {
@@ -61,22 +60,3 @@ export default function useNetlifyIdentity(onAuthChange) {
     authedFetch
   };
 }
-
-/*
-   <div className="Login">
-{user ? (
-  <a onClick={doLogout}>Logout</a>
-) : (
-  <span>
-    <a onClick={doLogin}>Login or Sign Up</a>
-  </span>
-)}
-</div> 
-*/
-
-//   app_metadata,
-//   created_at,
-//   confirmed_at,
-//   email,
-//   id,
-//   user_metadata

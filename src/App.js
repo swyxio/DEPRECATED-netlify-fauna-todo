@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Router, Link, navigate } from '@reach/router';
-import useFauna from './hooks/useFauna';
+import useFauna from 'hooks/useFauna';
 import useNetlifyIdentity from 'hooks/useNetlifyIdentity';
 import { FaunaCtx, UserCtx } from 'contexts';
 import Footer from './components/Footer';
@@ -66,18 +66,18 @@ function List(props) {
   const [editing, setEditing] = useState(null);
   const edit = todo => () => setEditing(todo.ref);
   const onClearCompleted = () => load(clearCompleted(state.list, listId));
-  return isLoading || !state || !state.list ? (
-    <Spinner />
-  ) : (
+  return (
     <div>
+      {(isLoading || !state || !state.list) && <Spinner />}
       <div className="listNav">
-        <label>List: {state.list.data.title}</label>
+        <label>List: {state && state.list.data.title}</label>
         <button onClick={() => navigate('/')}>back to all lists</button>
       </div>
       <ul className="todo-list">
-        {state.err ? (
+        {state && state.err ? (
           <div>{JSON.stringify(state.err, null, 2)} </div>
         ) : (
+          shownTodos &&
           shownTodos.map(todo => {
             const handle = fn => () => load(fn(todo, listId).then(setState));
             return (
@@ -103,7 +103,7 @@ function List(props) {
         placeholder="Add a new item to your list."
       />
 
-      {state.todos && (
+      {state && state.todos && (
         <Footer
           count={shownTodos.length}
           completedCount={
@@ -128,23 +128,20 @@ function AllLists() {
         <label>Choose a list.</label>
       </div>
       <section className="main">
-        {isLoading ? (
-          <Spinner />
-        ) : (
-          <ul className="todo-list">
-            {lists.map(({ data, ref }) => {
-              console.log('list', data, ref);
-              return (
-                <li key={ref.value.id}>
-                  {/* <label onClick={() => alert('go')}>{data.title}</label> */}
-                  <label>
-                    <Link to={`/list/${ref.value.id}`}>{data.title}</Link>
-                  </label>
-                </li>
-              );
-            })}
-          </ul>
-        )}
+        {isLoading && <Spinner />}
+        <ul className="todo-list">
+          {lists.map(({ data, ref }) => {
+            console.log('list', data, ref);
+            return (
+              <li key={ref.value.id}>
+                {/* <label onClick={() => alert('go')}>{data.title}</label> */}
+                <label>
+                  <Link to={`/list/${ref.value.id}`}>{data.title}</Link>
+                </label>
+              </li>
+            );
+          })}
+        </ul>
       </section>
       <InputArea
         onSubmit={addList}

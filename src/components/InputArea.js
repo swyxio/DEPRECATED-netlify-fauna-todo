@@ -1,5 +1,5 @@
 import React from 'react';
-import { useInput } from 'hooks';
+import { useInput } from '@swyx/hooks';
 
 export default function InputArea({ onSubmit, placeholder }) {
   const { setValue, ...inputProps } = useInput();
