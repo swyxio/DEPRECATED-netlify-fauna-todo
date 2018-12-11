@@ -1,5 +1,5 @@
 import React from 'react';
-import { Router, Link, navigate } from '@reach/router';
+import { Link } from '@reach/router';
 import classNames from 'classnames';
 
 function TodoFooter({

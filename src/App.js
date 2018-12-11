@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Router, Link, navigate } from '@reach/router';
-import useFauna from './useFauna';
+import useFauna from './hooks/useFauna';
 import useNetlifyIdentity from 'hooks/useNetlifyIdentity';
 import { FaunaCtx, UserCtx } from 'contexts';
 import Footer from './components/Footer';
@@ -65,7 +65,7 @@ function List(props) {
   );
   const [editing, setEditing] = useState(null);
   const edit = todo => () => setEditing(todo.ref);
-  const onClearCompleted = () => clearCompleted(state.list, listId);
+  const onClearCompleted = () => load(clearCompleted(state.list, listId));
   return isLoading || !state || !state.list ? (
     <Spinner />
   ) : (
