@@ -83,7 +83,7 @@ export default function useFauna() {
           }
         })
       )
-      .then(getServerLists);
+      .then(() => getServerLists(client));
   };
 
   const addTodo = (list, id) => title => {

@@ -74,7 +74,8 @@ function List(props) {
   );
   const [editing, setEditing] = useState(null);
   const edit = todo => () => setEditing(todo.ref);
-  const onClearCompleted = () => load(clearCompleted(state.list, listId));
+  const onClearCompleted = () =>
+    load(clearCompleted(state.list, listId).then(setState));
   return (
     <div>
       {(isLoading || !state || !state.list) && <Spinner />}
@@ -130,7 +131,10 @@ function List(props) {
   );
 }
 function AllLists() {
-  const { lists, isLoading, addList } = useContext(FaunaCtx);
+  const { lists, isLoading, addList, load, getServerLists } = useContext(
+    FaunaCtx
+  );
+  const onSubmit = title => load(addList(title));
   return (
     <div>
       <div className="listNav">
@@ -153,7 +157,7 @@ function AllLists() {
         </ul>
       </section>
       <InputArea
-        onSubmit={addList}
+        onSubmit={onSubmit}
         placeholder="Create a new list or choose from above."
       />
     </div>
