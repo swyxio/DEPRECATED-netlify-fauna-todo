@@ -19,14 +19,23 @@ const NotFound = () => (
 
 function Login() {
   const { user, doLogin, doLogout } = useContext(UserCtx);
+  const style = { cursor: 'pointer' };
   var actionForm = (
     <span>
-      <button onClick={doLogin}>Login or Sign Up</button>
+      <button style={style} onClick={doLogin}>
+        Login or Sign Up
+      </button>
     </span>
   );
   return (
     <div className="Login">
-      {user ? <button onClick={doLogout}>Logout</button> : actionForm}
+      {user ? (
+        <button style={style} onClick={doLogout}>
+          Logout
+        </button>
+      ) : (
+        actionForm
+      )}
     </div>
   );
 }
@@ -168,16 +177,18 @@ export default function App(props) {
         <div>
           <header className="header">
             <Login />
-            <Router>
-              <AllLists path="/" />
-              <Wrapper path="list">
-                <List path=":listId" />
-                <List path=":listId/active" />
-                <List path=":listId/completed" />
+            {identity.user && (
+              <Router>
+                <AllLists path="/" />
+                <Wrapper path="list">
+                  <List path=":listId" />
+                  <List path=":listId/active" />
+                  <List path=":listId/completed" />
+                  <NotFound default />
+                </Wrapper>
                 <NotFound default />
-              </Wrapper>
-              <NotFound default />
-            </Router>
+              </Router>
+            )}
           </header>
         </div>
       </UserCtx.Provider>

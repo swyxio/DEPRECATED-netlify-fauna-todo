@@ -27,7 +27,7 @@ export default function useNetlifyIdentity(onAuthChange) {
   );
   React.useEffect(() => {
     netlifyIdentity.on('login', user => setItem(user));
-    netlifyIdentity.on('logout', () => removeItem());
+    netlifyIdentity.on('logout', () => console.log('logooooo') || removeItem());
   }, []);
 
   // definition - `item` comes from  useNetlifyIdentity hook
@@ -52,11 +52,19 @@ export default function useNetlifyIdentity(onAuthChange) {
     put: genericAuthedFetch('PUT'),
     delete: genericAuthedFetch('DELETE')
   };
+  const doLogout = () => {
+    console.log('logout');
+    netlifyIdentity.logout();
+  };
+  const doLogin = () => {
+    console.log('login');
+    netlifyIdentity.open();
+  };
 
   return {
     user: item,
-    doLogout: netlifyIdentity.logout,
-    doLogin: () => netlifyIdentity.open(),
+    doLogout,
+    doLogin,
     authedFetch
   };
 }
