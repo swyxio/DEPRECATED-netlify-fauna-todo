@@ -100,7 +100,6 @@ function List(props) {
                 editing={editing === todo.ref}
                 onSave={val => handle(save(val))()}
                 onCancel={console.log}
-                // onCancel={this.cancel.bind(this)}
               />
             );
           })
@@ -144,7 +143,6 @@ function AllLists() {
         {isLoading && <Spinner />}
         <ul className="todo-list">
           {lists.map(({ data, ref }) => {
-            console.log('list', data, ref);
             return (
               <li key={ref.value.id}>
                 {/* <label onClick={() => alert('go')}>{data.title}</label> */}

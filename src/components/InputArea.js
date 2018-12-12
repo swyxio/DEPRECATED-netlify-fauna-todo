@@ -9,11 +9,6 @@ export default function InputArea({ onSubmit, placeholder }) {
     var val = event.target.value.trim();
     if (val) {
       onSubmit(val);
-      // if (this.state.nowShowing === ALL_LISTS) {
-      //   modelRef.current.addList(val);
-      // } else {
-      //   modelRef.current.addTodo(val, modelRef.current.list());
-      // }
       setValue('');
     }
   };
