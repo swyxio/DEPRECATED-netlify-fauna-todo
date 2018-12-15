@@ -54,8 +54,8 @@ export default function useNetlifyIdentity(onAuthChange) {
   };
   return {
     user: item,
-    doLogout: netlifyIdentity.logout,
-    doLogin: netlifyIdentity.open,
+    doLogout: () => netlifyIdentity.logout(),
+    doLogin: () => netlifyIdentity.open(),
     authedFetch
   };
 }
