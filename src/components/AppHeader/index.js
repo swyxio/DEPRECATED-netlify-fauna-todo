@@ -33,14 +33,14 @@ const AppHeader = props => {
             <a
               target="_blank"
               rel="noopener noreferrer"
-              href="https://github.com/sw-yx/netlify-identity-fauna-reddit-clone"
+              href="https://github.com/sw-yx/netlify-fauna-todo"
             >
               <img
                 className="github-icon"
                 src={github}
                 alt="view repo on github"
               />
-              View the source Luke
+              View source
             </a>
           </div>
         </div>
