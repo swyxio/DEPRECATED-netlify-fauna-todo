@@ -11,8 +11,9 @@ if (!process.env.FAUNADB_SERVER_SECRET) {
   return false;
 }
 
-console.log('server', process.env.FAUNADB_SERVER_SECRET);
-console.log('admin', process.env.FAUNADB_ADMIN_SECRET);
+// // NOT SECURE to leave uncommented - but this is handy for debugging
+// console.log('server', process.env.FAUNADB_SERVER_SECRET);
+// console.log('admin', process.env.FAUNADB_ADMIN_SECRET);
 
 console.log(chalk.cyan('Creating your FaunaDB Database...\n'));
 if (insideNetlify) {

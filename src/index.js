@@ -1,4 +1,7 @@
-import React, { ConcurrentMode, StrictMode } from 'react';
+import React, {
+  unstable_ConcurrentMode as ConcurrentMode,
+  StrictMode
+} from 'react';
 import ReactDOM from 'react-dom';
 // import './index.css';
 import 'todomvc-common/base.css';
