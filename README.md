@@ -12,9 +12,10 @@ One click deploy:
 
 Manual deploy/Local development
 
+with the CLI installed,
+ 
 1. Deploy to Netlify and run `netlify addons:create fauna`
-1. look for the given server secret from the netlify addon, and copy it
-1. run `export FAUNADB_SERVER_SECRET=your_secret_here`
+1. run `netlify dev` (see [repo for more info](https://github.com/netlify/netlify-dev-plugin/))
 
 Features of note:
 
