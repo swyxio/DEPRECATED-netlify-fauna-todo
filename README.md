@@ -1,5 +1,9 @@
-# netlify-fauna-todo
+# DEPRECATED
 
+Please refer to https://github.com/netlify/netlify-faunadb-example for now.
+
+<details>
+ <summary> old description </summary>
 Netlify Identity + FaunaDB app with most recent versions of FaunaDB client and React.
 
 - Video: https://youtu.be/7OB_IjTTcwg
@@ -22,3 +26,5 @@ Features of note:
 - Netlify Identity Authentication
 - `useFauna` React Hook
 - custom hooks from [@swyx/hooks](https://github.com/sw-yx/hooks)
+
+</details>
